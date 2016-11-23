@@ -17,10 +17,19 @@ public class minesweeper {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		MineGridClass game = new MineGridClass(100, 4, 50);
-		createPanel(100);
+		/*
+		for (user : user set) {
+			createPanel(100);
+		}
+		*/
 		int[][] player_color= assignPlayerColor(4);
 		/*
 		 * Following space will be handling user's request and show them on the panel
+		 * Get player move by calling game.makeMove()
+		 * paint the board accroding to the value returned
+		 * 
+		 * Use while loop to continuously get player respond, 4 request from 4 players one round in the while
+		 * loop, condition set to isEnd() THINKING ABOUT LOCKING WHEN ONE PLAYER IS USING
 		 */
 	}
 	
