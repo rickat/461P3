@@ -11,10 +11,16 @@ import java.util.Random;
 public class MineGridClass {
 	private int[][] grid;
 	private int players_size;
+	private int remaining_grid_space;
 	
 	public MineGridClass(int grid_size, int player_size, int max_mine_size) {
+		if (max_mine_size > grid_size * grid_size) {
+			System.out.println("Cannot have too many mines! Use default maximum mine settings");
+			max_mine_size = grid_size * grid_size;
+		}
 		this.grid = new int[grid_size][grid_size];
 		this.players_size = player_size;
+		this.remaining_grid_space -= max_mine_size;
 		initializeGrid(grid_size, max_mine_size);
 	}
 	
@@ -41,11 +47,18 @@ public class MineGridClass {
 			return -2;
 		}
 		if (grid[row][col] == -1) {
+			players_size--;
 			return -1;
 		}
 		if (grid[row][col] > 0) {
 			return 0;
 		}
+		remaining_grid_space--;
 		return 1;
+	}
+	
+	// winning condition: only one player survives or all space is occupied
+	public boolean isEnd() {
+		return players_size == 1 || remaining_grid_space == 0;
 	}
 }
