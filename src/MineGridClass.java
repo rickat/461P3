@@ -54,6 +54,7 @@ public class MineGridClass {
 			return 0;
 		}
 		remaining_grid_space--;
+		grid[row][col] = player_num;
 		return 1;
 	}
 	

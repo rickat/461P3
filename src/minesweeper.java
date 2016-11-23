@@ -18,6 +18,24 @@ public class minesweeper {
 	 */
 	public static int[] conquered_area;
 	
+	/*
+	 * Initial packet from server to client: 16 bytes
+	 * ---------------
+	 * |ACK|GRID SIZE| 
+	 * ---------------
+	 * 
+	 * User request packet: 24 bytes
+	 * player ID wants [row][col]
+	 * -----------------------
+	 * |Player ID|row #|col #|
+	 * -----------------------
+	 * 
+	 * Server to client later packet: 48 bytes
+	 * user update [row][col] to color 
+	 * --------------------------
+	 * |ACK|row #|col #|color[3]|
+	 * --------------------------
+	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		MineGridClass game = new MineGridClass(100, 4, 50);
