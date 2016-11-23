@@ -8,21 +8,29 @@ import java.util.List;
  * @author ylh96
  *
  */
+
+// each player have their own board with buttons on them but no functions
 public class minesweeper {
 
 	// public GUI panel; <++++++++++++++++++++++++++++++++++++++++++++++++++++++++HERE!
 	/**
 	 * @param args
 	 */
+	public static int[] conquered_area;
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		MineGridClass game = new MineGridClass(100, 4, 50);
+		// for recording each user's land
+		conquered_area = new int[4];
 		/*
 		for (user : user set) {
 			createPanel(100);
 		}
 		*/
 		int[][] player_color= assignPlayerColor(4);
+		// listen for players to join
+		// send out initial message: board size for user to create board on their end
 		/*
 		 * Following space will be handling user's request and show them on the panel
 		 * Get player move by calling game.makeMove()
@@ -30,6 +38,10 @@ public class minesweeper {
 		 * 
 		 * Use while loop to continuously get player respond, 4 request from 4 players one round in the while
 		 * loop, condition set to isEnd() THINKING ABOUT LOCKING WHEN ONE PLAYER IS USING
+		 * 
+		 * if end:
+		 * case 1: only one player survived, report the winner
+		 * case 2: more than one survived, player with more land wins, report the winner
 		 */
 	}
 	
