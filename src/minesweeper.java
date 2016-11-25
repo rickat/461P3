@@ -1,3 +1,5 @@
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -5,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  * 
@@ -30,6 +33,7 @@ public class minesweeper {
 	public static int[][] player_color;
 	public static MineGridClass game;
 	public static int player_count = 0;
+	public static int port_num;
 	// maps a socket to player ID
 	// public static HashMap<Socket, Integer> client_info;
 	
@@ -70,6 +74,15 @@ public class minesweeper {
 		player_color = new int[PLAYER][3];
 		// client_info = new HashMap<>();
 		assignPlayerColor();
+		// get port number
+		Scanner scan = new Scanner(System.in);
+		port_num = scan.nextInt();
+		try {
+			ServerSocket ss = new ServerSocket(port_num);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// listen for players to join
 		// send out initial message: board size for user to create board on their end
 		/*
@@ -84,6 +97,16 @@ public class minesweeper {
 		 * case 1: only one player survived, report the winner
 		 * case 2: more than one survived, player with more land wins, report the winner
 		 */
+	}
+	
+	static class Client_handler implements Runnable {
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 	
 	// create initial packet
