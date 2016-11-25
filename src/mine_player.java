@@ -1,4 +1,11 @@
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.Scanner;
 
 /**
  * 
@@ -7,6 +14,7 @@ import java.nio.ByteBuffer;
 /**
  * @author Yilun Hua (1428927), Shen Wang (1571169), Antony Chen ()
  * Player side program
+ * MAYBE NEED SOCKETCHANNEL INSTEAD OF SOCKET
  */
 public class mine_player {
 
@@ -16,18 +24,46 @@ public class mine_player {
 	
 	/**
 	 * @param args
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Enter host name");
+		String hostname = scan.nextLine();
+		InetAddress IPAddress = InetAddress.getByName(hostname);
+		int port_num = scan.nextInt();
+		// connect the server 
+		Socket socket = new Socket(IPAddress, port_num);
+		int error_count = 0;
+		int max_error = 100;
+		while(true) {
+			if(socket.isConnected()) {
+				break;
+			} else {
+				error_count++;
+				if(error_count == max_error) {
+					socket.close();
+					System.out.println("Failed");
+				}
+			}
+		}
+		// read server packet
+		InputStream in = socket.getInputStream();
+		DataInputStream dis = new DataInputStream(in);
+		byte[] data = new byte[48];
+		dis.readFully(data);
+		// if failed quit
+		if (!handleFirstPacket(decodePacket(ByteBuffer.wrap(data)))) return;
 		
 	}
 	
 	// handles the server's initial packet
-	public void handleFirstPacket(int[] ia) {
+	public static boolean handleFirstPacket(int[] ia) {
 		if (ia[0] == 0) {  // failed to join
 			System.out.println("Fail to join the game!");
 			// disconnect
-			return;
+			return false;
 		} else {  // success
 			mycolor = new int[3];
 			// get color
@@ -38,11 +74,12 @@ public class mine_player {
 			player_id = ia[5];
 			// draw the GUI
 			createPanel(ia[1]);
+			return true;
 		}
 	}
 	
 	// handles server's response
-	public void handleServerPacket(int[] ia) {
+	public static void handleServerPacket(int[] ia) {
 		if (ia[0] == -1) {  // error case, do nothing
 			return;
 		} else if (ia[0] == 0) {  // explode case
