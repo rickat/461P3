@@ -185,10 +185,10 @@ public class minesweeper {
 			for (int j = 0; j < 3; j++) {
 				int cur_color = rand.nextInt(256);
 				while (colors.get(j).contains(cur_color)) {
-					cur_color = rand.nextInt(256);
-					colors.get(j).add(cur_color);
+					cur_color = rand.nextInt(256);	
 				}
 				player_color[i][j] = cur_color;
+				colors.get(j).add(cur_color);
 			}
 		}
 	}
