@@ -18,9 +18,9 @@ import java.util.Scanner;
  */
 public class mine_player {
 
-	public static int player_id;
+	public int player_id;
 	public static boolean madeMove = false;  // can be replaced by checking if color is mycolor
-	public static int[] mycolor;
+	public int[] mycolor;
 
 	
 	// handles the server's initial packet
@@ -29,12 +29,12 @@ public class mine_player {
 	// ia[2],ia[3],ia[4] is color
 	// ia[5] is color
 	// return whether user servive
-	public static int handleFirstPacket(int[] ia) {
+	public int handleFirstPacket(int[] ia) {
 		if (ia[0] == 0) {  // failed to join
 			System.out.println("Fail to join the game!");
 			// disconnect
 			//return false;
-
+			return -1;
 		} else {  // success
 			mycolor = new int[3];
 			// get color
@@ -54,7 +54,7 @@ public class mine_player {
 	
 
 	// get the request and prepare the packet
-	public static byte[] action(int row, int col) {
+	public byte[] action(int row, int col) {
 		ByteBuffer bb = ByteBuffer.allocate(24);
 		bb.putInt(player_id).putInt(row).putInt(col);
 		madeMove = true;  // it made a move, set it to true
@@ -62,7 +62,7 @@ public class mine_player {
 	}
 
 	// decode the server packet
-	public static int[] decodePacket(ByteBuffer bb) {
+	public int[] decodePacket(ByteBuffer bb) {
 		int[] res = new int[6];
 		for (int i = 0; i < 6; i++) {
 			res[i] = bb.getInt(i * 8);

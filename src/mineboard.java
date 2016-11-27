@@ -3,12 +3,19 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+
 
 
 /**
@@ -28,7 +35,7 @@ public class mineboard {
 	public Socket socket;
 
 
-	mineboard(int size, String hostname, int port_num){
+	mineboard(int size, String hostname, int port_num) throws IOException{
 		InetAddress IPAddress = InetAddress.getByName(hostname);
 		this.buttons = new JButton[size][size];
 		this.size = size;
@@ -47,6 +54,7 @@ public class mineboard {
 				}
 			}
 		}
+		mine_player mp = new mine_player();
 		// read server packet
 		InputStream in = socket.getInputStream();
 		DataInputStream dis = new DataInputStream(in);
@@ -126,14 +134,14 @@ public class mineboard {
 			return;
 		} else if (ia[0] == 0) {  // explode case
 			setColor(ia[1], ia[2], new int[]{ia[3], ia[4], ia[5]});
-			if (madeMove) {  // it was this user who exploded, disconnect
+			if (mine_player.madeMove) {  // it was this user who exploded, disconnect
 				System.out.println("YOU EXPLODED");
 				// disconnect
 				return;
 			}
 		} else {
 			setColor(ia[1], ia[2], new int[]{ia[3], ia[4], ia[5]});
-			madeMove = false;  // move completed
+			mine_player.madeMove = false;  // move completed
 		}
 	}
 
