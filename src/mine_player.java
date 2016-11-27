@@ -59,6 +59,10 @@ public class mine_player {
 	}
 	
 	// handles the server's initial packet
+	// ia[0] is ack
+	// ia[1] is size
+	// ia[2],ia[3],ia[4] is color
+	// ia[5] is color
 	public static boolean handleFirstPacket(int[] ia) {
 		if (ia[0] == 0) {  // failed to join
 			System.out.println("Fail to join the game!");
