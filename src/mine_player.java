@@ -83,6 +83,9 @@ public class mine_player {
 	}
 	
 	// handles server's response
+	// ia[0] is ack: whether a client is dead or not
+	// ia[1], ia[2]: coordinate
+	// ia[3], ia[4], ia[5] are colors
 	public static void handleServerPacket(int[] ia) {
 		if (ia[0] == -1) {  // error case, do nothing
 			return;
