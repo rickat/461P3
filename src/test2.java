@@ -59,6 +59,26 @@ public class test2 extends Frame implements ActionListener{
                 b.setIcon(icon);
                buttons[ii][jj] = b;
                b.addActionListener(this);
+               b.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
+            	   JButton selectedButton = (JButton) e.getSource();
+            	   boolean done = false;
+            	   for (int row = 0; row < buttons.length; row++) {
+            		   for (int col = 0; col < buttons[row].length; col++) {
+            			   if (buttons[row][col] == selectedButton) {
+            				   try {
+            					   setColor(row, col, new int[]{0, 0, 0});
+            				   } catch (IOException e1) {
+            					   // TODO Auto-generated catch block
+            					   e1.printStackTrace();
+            				   }
+            				   done = true;
+            				   break;
+            			   }
+            		   }
+            		   if (done) break;
+            	   }
+               }}); 
+               // b.addActionListener(this);
                b.setBackground(Color.white); 
                chessBoard.add(buttons[ii][jj]);
             }
