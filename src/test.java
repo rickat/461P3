@@ -1,218 +1,73 @@
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.util.Scanner;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import javax.swing.*;
+import javax.swing.border.*;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-
-
-
-/**
- * 
- */
-
-/**
- * @author ylh96
- *
- */
 public class test {
 
-	private final JPanel gui = new JPanel();
-	private static JButton[][] buttons;
-	private int size;
-	private JPanel mine_board;
-	public Socket socket;
-	mine_player mp;
+    private final JPanel gui = new JPanel(new BorderLayout(3, 3));
+    private JPanel chessBoard;
+    private int size = 50;
+    private JButton[][] chessBoardSquares = new JButton[size][size];
 
-	test() throws IOException{
-		mp = new mine_player();
-		// read server packet
-		// if failed quit
-		if ((this.size = 100) == -1) return;
-		this.buttons = new JButton[size][size];
-		initializeGui();
-	}
+    test() {
+        initializeGui();
+    }
 
-	public final void initializeGui() {
+    public void initializeGui() {
+        // set up the main GUI
+        gui.setBorder(new EmptyBorder(5, 5, 5, 5));
+        // gui.add(new JLabel("?"), BorderLayout.LINE_START);
 
-		mine_board = new JPanel() {
-			/**
-			 * 
-			 */
+        chessBoard = new JPanel(new GridLayout(0, size));
+        chessBoard.setBorder(new LineBorder(Color.BLACK));
+        gui.add(chessBoard);
 
-			private static final long serialVersionUID = 1L;
-		
-			/**
-			 * Override the preferred size to return the largest it can, in
-			 * a square shape.  Must (must, must) be added to a GridBagLayout
-			 * as the only component (it uses the parent as a guide to size)
-			 * with no GridBagConstaint (so it is centered).
-			 */
-			@Override
-			public final Dimension getPreferredSize() {
-				Dimension d = super.getPreferredSize();
-				Dimension prefSize = null;
-				Component c = getParent();
-				if (c == null) {
-					prefSize = new Dimension(
-							(int)d.getWidth(),(int)d.getHeight());
-				} else if (c!=null &&
-						c.getWidth()>d.getWidth() &&
-						c.getHeight()>d.getHeight()) {
-					prefSize = c.getSize();
-				} else {
-					prefSize = d;
-				}
-				int w = (int) prefSize.getWidth();
-				int h = (int) prefSize.getHeight();
-				// the smaller of the two sizes
-				int s = (w>h ? h : w);
-				return new Dimension(s,s);
-			}
-		};
-
-		mine_board.setBorder(new CompoundBorder(
-				new EmptyBorder(size,size,size,size),
-				new LineBorder(Color.BLACK)
-				));
-	
-		mine_board.setBackground(new Color(255,255,255));
-		JPanel boardConstrain = new JPanel(new GridBagLayout());
-		boardConstrain.setBackground(new Color(255,255,255));
-		boardConstrain.add(mine_board);
-		gui.add(boardConstrain);
-	
-		// create the mine board squares
-		Insets buttonMargin = new Insets(0, 0, 0, 0);
-		for (int ii = 0; ii < buttons.length; ii++) {
-			for (int jj = 0; jj < buttons[ii].length; jj++) {
-				JButton b = new JButton();
-				b.setMargin(buttonMargin);
-				buttons[jj][ii] = b;
-			}
-		}
-
-	}
-	
-	public void readFromServer() throws IOException {
-		while (true) {
-			InputStream in = socket.getInputStream();
-			DataInputStream dis = new DataInputStream(in);
-			byte[] data = new byte[48];
-			dis.readFully(data);
-			int[] a = mp.decodePacket(ByteBuffer.wrap(data));
-			if (!handleServerPacket(a)) break;
-		}
-	}
-
-	public void actionPerformed(ActionEvent e) throws IOException {
-		JButton selectedButton = (JButton) e.getSource();
-		boolean done = false;
-		for (int row = 0; row < buttons.length; row++) {
-			for (int col = 0; col < buttons[row].length; col++) {
-				if (buttons[row][col] == selectedButton) {
-					byte[] res = mp.action(row, col);
-					// scoket send packet to server
-					/*
-					OutputStream out = socket.getOutputStream();
-					DataOutputStream dos = new DataOutputStream(out);
-					out.write(res);
-					*/
-					System.out.println("clicked " + row + " "  + col);
-					done = true;
-					break;
-				}
-			}
-			if (done) break;
-		}
-	}
-	
-	public static void setColor(int row, int col, int[] color) throws IOException {
-		JButton selectedButton = buttons[row][col];
-		// set the right color
-	}
-
-	// handles server's response
-	// ia[0] is ack: whether a client is dead or not
-	// ia[1], ia[2]: coordinate
-	// ia[3], ia[4], ia[5] are colors
-	public static boolean handleServerPacket(int[] ia) throws IOException {
-		if (ia[0] == -1) {  // error case, do nothing
-			return false;
-		} else if (ia[0] == 0) {  // explode case
-			setColor(ia[1], ia[2], new int[]{ia[3], ia[4], ia[5]});
-			if (ia[3] == mine_player.mycolor[0]
-					&& ia[4] == mine_player.mycolor[1]
-					&& ia[5] == mine_player.mycolor[2]) {  // it was this user who exploded, disconnect
-				System.out.println("YOU EXPLODED");
-				// disconnect
-				return false;
-			}
-			return true;
-		} else {
-			setColor(ia[1], ia[2], new int[]{ia[3], ia[4], ia[5]});
-			return true;
-		}
-	}
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		/* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+        // create the chess board squares
+        Insets buttonMargin = new Insets(0,0,0,0);
+        
+        for (int ii = 0; ii < size/*chessBoardSquares.length*/; ii++) {
+            for (int jj = 0; jj < size/*chessBoardSquares[ii].length*/; jj++) {
+                JButton b = new JButton();
+                b.setMargin(buttonMargin);
+                ImageIcon icon = new ImageIcon(
+                        new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));
+                b.setIcon(icon);
+               chessBoardSquares[ii][jj] = b;
+               chessBoard.add(chessBoardSquares[ii][jj]);
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(test.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(test.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(test.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(test.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
+    }
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+    public final JComponent getChessBoard() {
+        return chessBoard;
+    }
+
+    public final JComponent getGui() {
+        return gui;
+    }
+
+    public static void main(String[] args) {
+        Runnable r = new Runnable() {
+
+            @Override
             public void run() {
-                try {
-					new test();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            }
-        });
-	
-	
-	
-	
-	}
+                test cb =
+                        new test();
 
+                JFrame f = new JFrame("test");
+                f.add(cb.getGui());
+                f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                f.setLocationByPlatform(true);
+
+                // ensures the frame is the minimum size it needs to be
+                // in order display the components within it
+                f.pack();
+                // ensures the minimum size is enforced.
+                f.setMinimumSize(f.getSize());
+                f.setVisible(true);
+            }
+        };
+        SwingUtilities.invokeLater(r);
+    }
 }
