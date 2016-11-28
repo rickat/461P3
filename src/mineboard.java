@@ -52,6 +52,7 @@ public class mineboard {
 				if(error_count == max_error) {
 					socket.close();
 					System.out.println("Failed");
+					System.exit(error_count);
 				}
 			}
 		}
