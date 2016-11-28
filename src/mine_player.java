@@ -19,8 +19,7 @@ import java.util.Scanner;
 public class mine_player {
 
 	public int player_id;
-	public static boolean madeMove = false;  // can be replaced by checking if color is mycolor
-	public int[] mycolor;
+	public static int[] mycolor;
 
 	
 	// handles the server's initial packet
@@ -57,7 +56,6 @@ public class mine_player {
 	public byte[] action(int row, int col) {
 		ByteBuffer bb = ByteBuffer.allocate(24);
 		bb.putInt(player_id).putInt(row).putInt(col);
-		madeMove = true;  // it made a move, set it to true
 		return bb.array();
 	}
 

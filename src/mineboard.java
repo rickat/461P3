@@ -149,14 +149,15 @@ public class mineboard {
 			return;
 		} else if (ia[0] == 0) {  // explode case
 			setColor(ia[1], ia[2], new int[]{ia[3], ia[4], ia[5]});
-			if (mine_player.madeMove) {  // it was this user who exploded, disconnect
+			if (ia[3] == mine_player.mycolor[0]
+					&& ia[4] == mine_player.mycolor[1]
+					&& ia[5] == mine_player.mycolor[2]) {  // it was this user who exploded, disconnect
 				System.out.println("YOU EXPLODED");
 				// disconnect
 				return;
 			}
 		} else {
 			setColor(ia[1], ia[2], new int[]{ia[3], ia[4], ia[5]});
-			mine_player.madeMove = false;  // move completed
 		}
 	}
 	
