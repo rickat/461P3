@@ -5,8 +5,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
@@ -74,17 +76,36 @@ public class mineboard {
 			/**
 			 * 
 			 */
-			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(ActionEvent e) {
+			private static final long serialVersionUID = 1L;
+			
+			public void readFromServer() throws IOException {
+				while (true) {
+					InputStream in = socket.getInputStream();
+					DataInputStream dis = new DataInputStream(in);
+					byte[] data = new byte[48];
+					dis.readFully(data);
+					int[] a = mp.decodePacket(ByteBuffer.wrap(data));
+					if (!handleServerPacket(a)) break;
+				}
+			}
+
+			public void actionPerformed(ActionEvent e) throws IOException {
 				JButton selectedButton = (JButton) e.getSource();
+				boolean done = false;
 				for (int row = 0; row < buttons.length; row++) {
 					for (int col = 0; col < buttons[row].length; col++) {
 						if (buttons[row][col] == selectedButton) {
-							setColor(row, col, mp.mycolor);
+							byte[] res = mp.action(row, col);
+							// scoket send packet to server
+							OutputStream out = socket.getOutputStream();
+							DataOutputStream dos = new DataOutputStream(out);
+							out.write(res);
+							done = true;
 							break;
 						}
 					}
+					if (done) break;
 				}
 			}
 		
@@ -144,9 +165,9 @@ public class mineboard {
 	// ia[0] is ack: whether a client is dead or not
 	// ia[1], ia[2]: coordinate
 	// ia[3], ia[4], ia[5] are colors
-	public static void handleServerPacket(int[] ia) {
+	public static boolean handleServerPacket(int[] ia) {
 		if (ia[0] == -1) {  // error case, do nothing
-			return;
+			return false;
 		} else if (ia[0] == 0) {  // explode case
 			setColor(ia[1], ia[2], new int[]{ia[3], ia[4], ia[5]});
 			if (ia[3] == mine_player.mycolor[0]
@@ -154,10 +175,12 @@ public class mineboard {
 					&& ia[5] == mine_player.mycolor[2]) {  // it was this user who exploded, disconnect
 				System.out.println("YOU EXPLODED");
 				// disconnect
-				return;
+				return false;
 			}
+			return true;
 		} else {
 			setColor(ia[1], ia[2], new int[]{ia[3], ia[4], ia[5]});
+			return true;
 		}
 	}
 	
@@ -179,6 +202,7 @@ public class mineboard {
 		System.out.println("Enter host name");
 		String hostname = scan.nextLine();
 		int port_num = scan.nextInt();
+		scan.close();
 		/* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

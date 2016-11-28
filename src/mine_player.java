@@ -18,7 +18,7 @@ import java.util.Scanner;
  */
 public class mine_player {
 
-	public int player_id;
+	public static int player_id;
 	public static int[] mycolor;
 
 	
