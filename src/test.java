@@ -30,42 +30,20 @@ import javax.swing.border.LineBorder;
  * @author ylh96
  *
  */
-public class mineboard {
+public class test {
 
-	private static final JPanel gui = new JPanel();
+	private final JPanel gui = new JPanel();
 	private static JButton[][] buttons;
-	private static int size;
-	private static JPanel mine_board;
-	public static Socket socket;
-	public static mine_player mp;
+	private int size;
+	private JPanel mine_board;
+	public Socket socket;
+	mine_player mp;
 
-	mineboard(String hostname, int port_num) throws IOException{
-		InetAddress IPAddress = InetAddress.getByName(hostname);
-		
-		// connect the server 
-		this.socket = new Socket(IPAddress, port_num);
-		int error_count = 0;
-		int max_error = 100;
-		while(true) {
-			if(socket.isConnected()) {
-				break;
-			} else {
-				error_count++;
-				if(error_count == max_error) {
-					socket.close();
-					System.out.println("Failed");
-					System.exit(error_count);
-				}
-			}
-		}
+	test() throws IOException{
 		mp = new mine_player();
 		// read server packet
-		InputStream in = socket.getInputStream();
-		DataInputStream dis = new DataInputStream(in);
-		byte[] data = new byte[48];
-		dis.readFully(data);
 		// if failed quit
-		if ((this.size = mp.handleFirstPacket(mp.decodePacket(ByteBuffer.wrap(data)))) == -1) return;
+		if ((this.size = 100) == -1) return;
 		this.buttons = new JButton[size][size];
 		initializeGui();
 	}
@@ -130,6 +108,44 @@ public class mineboard {
 		}
 
 	}
+	
+	public void readFromServer() throws IOException {
+		while (true) {
+			InputStream in = socket.getInputStream();
+			DataInputStream dis = new DataInputStream(in);
+			byte[] data = new byte[48];
+			dis.readFully(data);
+			int[] a = mp.decodePacket(ByteBuffer.wrap(data));
+			if (!handleServerPacket(a)) break;
+		}
+	}
+
+	public void actionPerformed(ActionEvent e) throws IOException {
+		JButton selectedButton = (JButton) e.getSource();
+		boolean done = false;
+		for (int row = 0; row < buttons.length; row++) {
+			for (int col = 0; col < buttons[row].length; col++) {
+				if (buttons[row][col] == selectedButton) {
+					byte[] res = mp.action(row, col);
+					// scoket send packet to server
+					/*
+					OutputStream out = socket.getOutputStream();
+					DataOutputStream dos = new DataOutputStream(out);
+					out.write(res);
+					*/
+					System.out.println("clicked " + row + " "  + col);
+					done = true;
+					break;
+				}
+			}
+			if (done) break;
+		}
+	}
+	
+	public static void setColor(int row, int col, int[] color) throws IOException {
+		JButton selectedButton = buttons[row][col];
+		// set the right color
+	}
 
 	// handles server's response
 	// ia[0] is ack: whether a client is dead or not
@@ -153,51 +169,11 @@ public class mineboard {
 			return true;
 		}
 	}
-
-	public static void readFromServer() throws IOException {
-		while (true) {
-			InputStream in = socket.getInputStream();
-			DataInputStream dis = new DataInputStream(in);
-			byte[] data = new byte[48];
-			dis.readFully(data);
-			int[] a = mp.decodePacket(ByteBuffer.wrap(data));
-			if (!handleServerPacket(a)) break;
-		}
-	}
-
-	public static void actionPerformed(ActionEvent e) throws IOException {
-		JButton selectedButton = (JButton) e.getSource();
-		boolean done = false;
-		for (int row = 0; row < buttons.length; row++) {
-			for (int col = 0; col < buttons[row].length; col++) {
-				if (buttons[row][col] == selectedButton) {
-					byte[] res = mp.action(row, col);
-					// scoket send packet to server
-					OutputStream out = socket.getOutputStream();
-					DataOutputStream dos = new DataOutputStream(out);
-					out.write(res);
-					done = true;
-					break;
-				}
-			}
-			if (done) break;
-		}
-	}
-	
-	public static void setColor(int row, int col, int[] color) throws IOException {
-		JButton selectedButton = buttons[row][col];
-		// set the right color
-	}
 	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Scanner scan = new Scanner(System.in);
-		System.out.println("Enter host name");
-		String hostname = scan.nextLine();
-		int port_num = scan.nextInt();
-		scan.close();
 		/* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -211,13 +187,13 @@ public class mineboard {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(mineboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(test.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(mineboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(test.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(mineboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(test.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(mineboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(test.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -226,7 +202,7 @@ public class mineboard {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-					new mineboard(hostname, port_num);
+					new test();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
