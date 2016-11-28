@@ -138,7 +138,7 @@ public class test extends Frame implements ActionListener{
  			for (int col = 0; col < buttons[row].length; col++) {
  				if (buttons[row][col] == selectedButton) {
  					try {
-						setColor(row, col, new int[]{0, 255, 255});
+						setColor(row, col, new int[]{0, 0, 0});
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
