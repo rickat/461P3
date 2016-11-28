@@ -1,19 +1,28 @@
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+
 import javax.swing.*;
 import javax.swing.border.*;
 
-public class test {
+public class test extends Frame implements ActionListener{
 
     private final JPanel gui = new JPanel(new BorderLayout(3, 3));
     private JPanel chessBoard;
-    private int size = 50;
-    private JButton[][] chessBoardSquares = new JButton[size][size];
+    private static int size = 50;
+    private static JButton[][] buttons = new JButton[size][size];
 
     test() {
         initializeGui();
     }
-
+    
     public void initializeGui() {
         // set up the main GUI
         gui.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -26,17 +35,37 @@ public class test {
         // create the chess board squares
         Insets buttonMargin = new Insets(0,0,0,0);
         
-        for (int ii = 0; ii < size/*chessBoardSquares.length*/; ii++) {
-            for (int jj = 0; jj < size/*chessBoardSquares[ii].length*/; jj++) {
+        for (int ii = 0; ii < size; ii++) {
+            for (int jj = 0; jj < size; jj++) {
                 JButton b = new JButton();
                 b.setMargin(buttonMargin);
                 ImageIcon icon = new ImageIcon(
                         new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));
                 b.setIcon(icon);
-               chessBoardSquares[ii][jj] = b;
-               chessBoard.add(chessBoardSquares[ii][jj]);
+                buttons[ii][jj] = b;
+                b.addActionListener(new ActionListener() {
+                	public void actionPerformed(ActionEvent e) {
+                		JButton selectedButton = (JButton) e.getSource();
+                		boolean done = false;
+                		for (int row = 0; row < buttons.length; row++) {
+                			for (int col = 0; col < buttons[row].length; col++) {
+                				if (buttons[row][col] == selectedButton) {
+                					System.out.println("Row: " + row + ", Col: " + col);
+                					done = true;
+                					break;
+                				}
+                			}
+                			if (done) break;
+                		}
+                	}
+               	});
+                b.addActionListener(this);
+               b.setBackground(Color.white); 
+               chessBoard.add(buttons[ii][jj]);
             }
         }
+        
+        
     }
 
     public final JComponent getChessBoard() {
@@ -46,6 +75,37 @@ public class test {
     public final JComponent getGui() {
         return gui;
     }
+    
+ // handles server's response
+ 	// ia[0] is ack: whether a client is dead or not
+ 	// ia[1], ia[2]: coordinate
+ 	// ia[3], ia[4], ia[5] are colors
+ 	public static boolean handleServerPacket(int[] ia) throws IOException {
+ 		if (ia[0] == -1) {  // error case, do nothing
+ 			return false;
+ 		} else if (ia[0] == 0) {  // explode case
+ 			setColor(ia[1], ia[2], new int[]{ia[3], ia[4], ia[5]});
+ 			if (ia[3] == mine_player.mycolor[0]
+ 					&& ia[4] == mine_player.mycolor[1]
+ 					&& ia[5] == mine_player.mycolor[2]) {  // it was this user who exploded, disconnect
+ 				System.out.println("YOU EXPLODED");
+ 				// disconnect
+ 				return false;
+ 			}
+ 			return true;
+ 		} else {
+ 			setColor(ia[1], ia[2], new int[]{ia[3], ia[4], ia[5]});
+ 			return true;
+ 		}
+ 	}
+
+ 	
+ 	
+ 	public static void setColor(int row, int col, int[] color) throws IOException {
+ 		JButton selectedButton = buttons[row][col];
+ 		selectedButton.setBackground(new Color(color[0], color[1], color[2])); 
+ 		// set the right color
+ 	}
 
     public static void main(String[] args) {
         Runnable r = new Runnable() {
@@ -70,4 +130,24 @@ public class test {
         };
         SwingUtilities.invokeLater(r);
     }
+
+    public void actionPerformed(ActionEvent e) {
+ 		JButton selectedButton = (JButton) e.getSource();
+ 		boolean done = false;
+ 		for (int row = 0; row < buttons.length; row++) {
+ 			for (int col = 0; col < buttons[row].length; col++) {
+ 				if (buttons[row][col] == selectedButton) {
+ 					try {
+						setColor(row, col, new int[]{0, 255, 255});
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+ 					done = true;
+ 					break;
+ 				}
+ 			}
+ 			if (done) break;
+ 		}
+ 	}
 }
