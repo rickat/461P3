@@ -33,7 +33,7 @@ import javax.swing.border.LineBorder;
 public class mineboard {
 
 	private final JPanel gui = new JPanel();
-	private JButton[][] buttons;
+	private static JButton[][] buttons;
 	private int size;
 	private JPanel mine_board;
 	public Socket socket;
@@ -108,6 +108,11 @@ public class mineboard {
 					if (done) break;
 				}
 			}
+			
+			public void setColor(int row, int col, int[] color) throws IOException {
+				JButton selectedButton = buttons[row][col];
+				// set the right color
+			}
 		
 			/**
 			 * Override the preferred size to return the largest it can, in
@@ -165,7 +170,7 @@ public class mineboard {
 	// ia[0] is ack: whether a client is dead or not
 	// ia[1], ia[2]: coordinate
 	// ia[3], ia[4], ia[5] are colors
-	public static boolean handleServerPacket(int[] ia) {
+	public static boolean handleServerPacket(int[] ia) throws IOException {
 		if (ia[0] == -1) {  // error case, do nothing
 			return false;
 		} else if (ia[0] == 0) {  // explode case
@@ -183,15 +188,10 @@ public class mineboard {
 			return true;
 		}
 	}
-	
-	// utility function to set color to [row, col]
-	public static void setColor(int row, int col, int[] color) {
-	
-	}
-	
-	// utility function to create an actual GUI on client screen
-	public static void createPanel(int size) {
-		// create a graphical grid
+
+	public static void setColor(int row, int col, int[] color) throws IOException {
+		JButton selectedButton = buttons[row][col];
+		// set the right color
 	}
 	
 	/**
