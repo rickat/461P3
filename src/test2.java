@@ -59,6 +59,7 @@ public class test2 extends Frame implements ActionListener{
                 b.setIcon(icon);
                buttons[ii][jj] = b;
                b.addActionListener(this);
+               b.setBackground(Color.white); 
                chessBoard.add(buttons[ii][jj]);
             }
         }
