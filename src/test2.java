@@ -43,6 +43,8 @@ public class test2 extends Frame implements ActionListener{
                         new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));
                 b.setIcon(icon);
                 buttons[ii][jj] = b;
+                b.setOpaque(true);
+                b.setBorderPainted(true);
                 b.addActionListener(new ActionListener() {
                 	public void actionPerformed(ActionEvent e) {
                 		JButton selectedButton = (JButton) e.getSource();
