@@ -16,7 +16,7 @@ public class test extends Frame implements ActionListener{
 
     private final JPanel gui = new JPanel(new BorderLayout(3, 3));
     private JPanel chessBoard;
-    private static int size = 50;
+    private static int size = 25;
     private static JButton[][] buttons = new JButton[size][size];
 
     test() {
