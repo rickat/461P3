@@ -40,8 +40,9 @@ public class ChessBoardWithColumnsAndRows {
 
         // create the chess board squares
         Insets buttonMargin = new Insets(0,0,0,0);
-        for (int ii = 0; ii < chessBoardSquares.length; ii++) {
-            for (int jj = 0; jj < chessBoardSquares[ii].length; jj++) {
+        
+        for (int ii = 0; ii < size/*chessBoardSquares.length*/; ii++) {
+            for (int jj = 0; jj < size/*chessBoardSquares[ii].length*/; jj++) {
                 JButton b = new JButton();
                 b.setMargin(buttonMargin);
                 // our chess pieces are 64x64 px in size, so we'll
@@ -58,21 +59,23 @@ public class ChessBoardWithColumnsAndRows {
                     b.setBackground(Color.BLACK);
                 }
                 */
-                chessBoardSquares[jj][ii] = b;
+               chessBoardSquares[ii][jj] = b;
             }
         }
+
         //fill the chess board
         
-        chessBoard.add(new JLabel(""));
+        // chessBoard.add(new JLabel(""));
         // fill the top row
         for (int ii = 0; ii < size; ii++) {
         	for (int jj = 0; jj < size; jj++) {
-        	chessBoard.add(chessBoardSquares[jj][ii]);
+        	chessBoard.add(chessBoardSquares[ii][jj]);
         	/*chessBoard.add(
                     new JLabel(/*COLS.substring(ii, ii + 1)*///"a",
                     // SwingConstants.CENTER));
         }
         }
+        /*
         // fill the black non-pawn piece row
         for (int ii = 0; ii < size; ii++) {
             for (int jj = 0; jj < size; jj++) {
@@ -85,9 +88,9 @@ public class ChessBoardWithColumnsAndRows {
                         chessBoard.add(chessBoardSquares[jj][ii]);
                 }
                 */
-            	chessBoard.add(chessBoardSquares[jj][ii]);
+          /*  	chessBoard.add(chessBoardSquares[ii][jj]);
             }
-        }
+        }*/
         
     }
 
