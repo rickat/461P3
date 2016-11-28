@@ -16,27 +16,12 @@ public class test2 extends Frame implements ActionListener{
 
     private final JPanel gui = new JPanel(new BorderLayout(3, 3));
     private JPanel chessBoard;
-    private static int size = 50;
+    private static int size = 25;
     private static JButton[][] buttons = new JButton[size][size];
 
     test2() {
         initializeGui();
     }
-
-    public void actionPerformed(ActionEvent e) {
- 		JButton selectedButton = (JButton) e.getSource();
- 		boolean done = false;
- 		for (int row = 0; row < buttons.length; row++) {
- 			for (int col = 0; col < buttons[row].length; col++) {
- 				if (buttons[row][col] == selectedButton) {
- 					System.out.println("Row: " + row + ", Col: " + col);
- 					done = true;
- 					break;
- 				}
- 			}
- 			if (done) break;
- 		}
- 	}
     
     public void initializeGui() {
         // set up the main GUI
@@ -57,28 +42,24 @@ public class test2 extends Frame implements ActionListener{
                 ImageIcon icon = new ImageIcon(
                         new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));
                 b.setIcon(icon);
-               buttons[ii][jj] = b;
-               b.addActionListener(this);
-               b.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-            	   JButton selectedButton = (JButton) e.getSource();
-            	   boolean done = false;
-            	   for (int row = 0; row < buttons.length; row++) {
-            		   for (int col = 0; col < buttons[row].length; col++) {
-            			   if (buttons[row][col] == selectedButton) {
-            				   try {
-            					   setColor(row, col, new int[]{0, 0, 0});
-            				   } catch (IOException e1) {
-            					   // TODO Auto-generated catch block
-            					   e1.printStackTrace();
-            				   }
-            				   done = true;
-            				   break;
-            			   }
-            		   }
-            		   if (done) break;
-            	   }
-               }}); 
-               // b.addActionListener(this);
+                buttons[ii][jj] = b;
+                b.addActionListener(new ActionListener() {
+                	public void actionPerformed(ActionEvent e) {
+                		JButton selectedButton = (JButton) e.getSource();
+                		boolean done = false;
+                		for (int row = 0; row < buttons.length; row++) {
+                			for (int col = 0; col < buttons[row].length; col++) {
+                				if (buttons[row][col] == selectedButton) {
+                					System.out.println("Row: " + row + ", Col: " + col);
+                					done = true;
+                					break;
+                				}
+                			}
+                			if (done) break;
+                		}
+                	}
+               	});
+                b.addActionListener(this);
                b.setBackground(Color.white); 
                chessBoard.add(buttons[ii][jj]);
             }
@@ -122,6 +103,7 @@ public class test2 extends Frame implements ActionListener{
  	
  	public static void setColor(int row, int col, int[] color) throws IOException {
  		JButton selectedButton = buttons[row][col];
+ 		selectedButton.setBackground(new Color(color[0], color[1], color[2])); 
  		// set the right color
  	}
 
@@ -148,4 +130,24 @@ public class test2 extends Frame implements ActionListener{
         };
         SwingUtilities.invokeLater(r);
     }
+
+    public void actionPerformed(ActionEvent e) {
+ 		JButton selectedButton = (JButton) e.getSource();
+ 		boolean done = false;
+ 		for (int row = 0; row < buttons.length; row++) {
+ 			for (int col = 0; col < buttons[row].length; col++) {
+ 				if (buttons[row][col] == selectedButton) {
+ 					try {
+						setColor(row, col, new int[]{0, 0, 0});
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+ 					done = true;
+ 					break;
+ 				}
+ 			}
+ 			if (done) break;
+ 		}
+ 	}
 }
