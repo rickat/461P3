@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class mineboard {
 
 	mineboard(String hostname, int port_num) throws IOException{
 		InetAddress IPAddress = InetAddress.getByName(hostname);
-		
+
 		// connect the server 
 		this.socket = new Socket(IPAddress, port_num);
 		int error_count = 0;
@@ -78,7 +79,7 @@ public class mineboard {
 			 */
 
 			private static final long serialVersionUID = 1L;
-		
+
 			/**
 			 * Override the preferred size to return the largest it can, in
 			 * a square shape.  Must (must, must) be added to a GridBagLayout
@@ -112,13 +113,13 @@ public class mineboard {
 				new EmptyBorder(size,size,size,size),
 				new LineBorder(Color.BLACK)
 				));
-	
+
 		mine_board.setBackground(new Color(255,255,255));
 		JPanel boardConstrain = new JPanel(new GridBagLayout());
 		boardConstrain.setBackground(new Color(255,255,255));
 		boardConstrain.add(mine_board);
 		gui.add(boardConstrain);
-	
+
 		// create the mine board squares
 		Insets buttonMargin = new Insets(0, 0, 0, 0);
 		for (int ii = 0; ii < buttons.length; ii++) {
@@ -126,6 +127,30 @@ public class mineboard {
 				JButton b = new JButton();
 				b.setMargin(buttonMargin);
 				buttons[jj][ii] = b;
+				b.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent e) {
+						JButton selectedButton = (JButton) e.getSource();
+						boolean done = false;
+						for (int row = 0; row < buttons.length; row++) {
+							for (int col = 0; col < buttons[row].length; col++) {
+								if (buttons[row][col] == selectedButton) {
+									try{
+									byte[] res = mp.action(row, col);
+									// scoket send packet to server
+									OutputStream out = socket.getOutputStream();
+									DataOutputStream dos = new DataOutputStream(out);
+									out.write(res);
+									done = true;
+									break;
+									}catch(IOException i) {
+										System.out.println("IOEception");
+									}
+								}
+							}
+							if (done) break;
+						}
+					}
+				});
 			}
 		}
 
@@ -142,7 +167,7 @@ public class mineboard {
 			setColor(ia[1], ia[2], new int[]{ia[3], ia[4], ia[5]});
 			if (ia[3] == mine_player.mycolor[0]
 					&& ia[4] == mine_player.mycolor[1]
-					&& ia[5] == mine_player.mycolor[2]) {  // it was this user who exploded, disconnect
+							&& ia[5] == mine_player.mycolor[2]) {  // it was this user who exploded, disconnect
 				System.out.println("YOU EXPLODED");
 				// disconnect
 				return false;
@@ -165,30 +190,13 @@ public class mineboard {
 		}
 	}
 
-	public static void actionPerformed(ActionEvent e) throws IOException {
-		JButton selectedButton = (JButton) e.getSource();
-		boolean done = false;
-		for (int row = 0; row < buttons.length; row++) {
-			for (int col = 0; col < buttons[row].length; col++) {
-				if (buttons[row][col] == selectedButton) {
-					byte[] res = mp.action(row, col);
-					// scoket send packet to server
-					OutputStream out = socket.getOutputStream();
-					DataOutputStream dos = new DataOutputStream(out);
-					out.write(res);
-					done = true;
-					break;
-				}
-			}
-			if (done) break;
-		}
-	}
-	
+
+
 	public static void setColor(int row, int col, int[] color) throws IOException {
 		JButton selectedButton = buttons[row][col];
 		// set the right color
 	}
-	
+
 	/**
 	 * @param args
 	 */
@@ -199,44 +207,44 @@ public class mineboard {
 		int port_num = scan.nextInt();
 		scan.close();
 		/* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(mineboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(mineboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(mineboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(mineboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
+		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+		/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+		 * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+		 */
+		try {
+			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					javax.swing.UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (ClassNotFoundException ex) {
+			java.util.logging.Logger.getLogger(mineboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (InstantiationException ex) {
+			java.util.logging.Logger.getLogger(mineboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (IllegalAccessException ex) {
+			java.util.logging.Logger.getLogger(mineboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
+			java.util.logging.Logger.getLogger(mineboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		}
+		//</editor-fold>
+		//</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
+		/* Create and display the form */
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
 					new mineboard(hostname, port_num);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-            }
-        });
-	
-	
-	
-	
+			}
+		});
+
+
+
+
 	}
 
 }
