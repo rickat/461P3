@@ -34,6 +34,7 @@ public class minesweeper {
 	public static MineGridClass game;
 	public static int player_count = 0;
 	public static int port_num;
+	public static Socket[] player_sockets;  // store player socket
 	// maps a socket to player ID
 	// public static HashMap<Socket, Integer> client_info;
 	
