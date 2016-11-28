@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.util.Scanner;
 
 import javax.swing.JButton;
@@ -34,12 +35,11 @@ public class mineboard {
 	private int size;
 	private JPanel mine_board;
 	public Socket socket;
-	mine_player mp = new mine_player();
+	mine_player mp;
 
-	mineboard(int size, String hostname, int port_num) throws IOException{
+	mineboard(String hostname, int port_num) throws IOException{
 		InetAddress IPAddress = InetAddress.getByName(hostname);
-		this.buttons = new JButton[size][size];
-		this.size = size;
+		
 		// connect the server 
 		this.socket = new Socket(IPAddress, port_num);
 		int error_count = 0;
@@ -55,14 +55,15 @@ public class mineboard {
 				}
 			}
 		}
-		
+		mp = new mine_player();
 		// read server packet
 		InputStream in = socket.getInputStream();
 		DataInputStream dis = new DataInputStream(in);
 		byte[] data = new byte[48];
 		dis.readFully(data);
 		// if failed quit
-		//if (!handleFirstPacket(decodePacket(ByteBuffer.wrap(data)))) return;
+		if ((this.size = mp.handleFirstPacket(mp.decodePacket(ByteBuffer.wrap(data)))) == -1) return;
+		this.buttons = new JButton[size][size];
 		initializeGui();
 	}
 
@@ -176,7 +177,41 @@ public class mineboard {
 		System.out.println("Enter host name");
 		String hostname = scan.nextLine();
 		int port_num = scan.nextInt();
-	
+		/* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(mineboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(mineboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(mineboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(mineboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+					new mineboard(hostname, port_num);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }
+        });
 	
 	
 	
