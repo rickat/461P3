@@ -57,6 +57,7 @@ public class minesweeper {
 	 * ACK is -1 for error, change nothing
 	 *     is 0 for a player death, turn block into black
 	 *     is 1 for success, turn block into specific color
+	 *     is 2 for someone won, turn all block to that color
 	 * --------------------------
 	 * |ACK|row #|col #|color[3]|
 	 * --------------------------
