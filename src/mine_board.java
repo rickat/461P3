@@ -184,6 +184,12 @@ public class mine_board extends Frame implements ActionListener{
                 // ensures the minimum size is enforced.
                 f.setMinimumSize(f.getSize());
                 f.setVisible(true);
+                try {
+					readFromServer();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         };
         SwingUtilities.invokeLater(r);

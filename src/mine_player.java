@@ -58,7 +58,7 @@ public class mine_player {
 		for (int i = 0; i < 6; i++) {
 			res[i] = bb.getInt(i * 8);
 		}
-		return null;
+		return res;
 	}
 
 	
