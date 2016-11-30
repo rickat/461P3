@@ -55,7 +55,7 @@ public class mine_board extends Frame implements ActionListener{
 		byte[] data = new byte[48];
 		dis.readFully(data);
 		// if failed quit
-		if ((this.size = mp.handleFirstPacket(mp.decodePacket(ByteBuffer.wrap(data)))) == -1) return;
+		if ((this.size = mp.handleFirstPacket(mp.decodePacket(ByteBuffer.wrap(data)))) == -1) System.exit(ABORT);;
 		mine_board.buttons = new JButton[size][size];
         initializeGui();
     }
