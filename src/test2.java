@@ -69,15 +69,15 @@ public class test2 extends Frame implements ActionListener{
         
         
     }
-
+/*
     public final JComponent getChessBoard() {
         return chessBoard;
     }
-
+*/    
     public final JComponent getGui() {
         return gui;
     }
-    
+
  // handles server's response
  	// ia[0] is ack: whether a client is dead or not
  	// ia[1], ia[2]: coordinate
