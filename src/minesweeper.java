@@ -1,13 +1,20 @@
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+
+import SWCopy.Client_handler;
 
 /**
  * 
@@ -33,8 +40,8 @@ public class minesweeper {
 	public static int[][] player_color;
 	public static MineGridClass game;
 	public static int player_count = 0;
-	public static int port_num;
 	public static Socket[] player_sockets;  // store player socket
+	public static Selector sel;
 	// maps a socket to player ID
 	// public static HashMap<Socket, Integer> client_info;
 	
@@ -78,13 +85,8 @@ public class minesweeper {
 		assignPlayerColor();
 		// get port number
 		Scanner scan = new Scanner(System.in);
-		port_num = scan.nextInt();
-		try {
-			ServerSocket ss = new ServerSocket(port_num);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		int port_num = scan.nextInt();
+		sel = Selector.open();
 		// listen for players to join
 		// send out initial message: board size for user to create board on their end
 		/*
@@ -99,13 +101,50 @@ public class minesweeper {
 		 * case 1: only one player survived, report the winner
 		 * case 2: more than one survived, player with more land wins, report the winner
 		 */
+		InetSocketAddress portnum = new InetSocketAddress(port_num);
+		ServerSocketChannel scs = ServerSocketChannel.open();
+		try {
+			scs.socket().bind(portnum);
+			// System.out.println("xxxx");
+			//			scs.configureBlocking(false);
+			// scs.register(selector, SelectionKey.OP_ACCEPT); 
+		} catch (IOException e) {
+			// System.out.println("Could not listen on port " + port_num);
+			System.exit(-1);
+		}
+		// accepts PLAYER players into game
+		while(true){
+			SocketChannel client = scs.accept();
+			if (client != null) {
+				client.configureBlocking(false);
+				client.register(sel, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+				player_sockets[player_count] = client.socket();
+				int player_id = player_count;
+				byte[] ba = initialPacket();
+				if (player_count >= PLAYER) {
+					client.write(ByteBuffer.wrap(ba));
+					break;
+				}
+				player_count++;
+				new Thread(new Client_handler(client, player_id)).start();
+			}
+		}
 	}
 	
 	static class Client_handler implements Runnable {
 
+		public SocketChannel clientSocket;
+		public int player_id;
+		
+		public Client_handler(SocketChannel socket, int player_id) throws Exception {
+			this.player_id = player_id;
+			clientSocket = socket;
+		}
+		
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
+			
 			
 		}
 		
@@ -114,7 +153,7 @@ public class minesweeper {
 	// create initial packet
 	// if player_count == PLAYER then ACK is 0
 	// else ACK is 1 and return back the information needed
-	public static byte[] initialPacket(Socket s) {
+	public static byte[] initialPacket() {
 		ByteBuffer bb = ByteBuffer.allocate(48);
 		if (player_count < PLAYER) {
 			player_count++;
