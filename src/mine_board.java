@@ -125,7 +125,6 @@ public class mine_board extends Frame implements ActionListener{
  					&& ia[4] == mine_player.mycolor[1]
  					&& ia[5] == mine_player.mycolor[2]) {  // it was this user who exploded, disconnect
  				System.out.println("YOU EXPLODED");
- 				socket.close();
  				return false;
  			}
  			return true;
@@ -150,6 +149,7 @@ public class mine_board extends Frame implements ActionListener{
  			int[] a = mp.decodePacket(ByteBuffer.wrap(data));
  			if (!handleServerPacket(a)) break;
  		}
+ 		socket.close();
  		System.out.println("Your game is ended");
  	}
 
