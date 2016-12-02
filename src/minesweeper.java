@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
-import SWCopy.Client_handler;
-
 /**
  * 
  */
@@ -69,7 +67,7 @@ public class minesweeper {
 	 * |ACK|row #|col #|color[3]|
 	 * --------------------------
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		// MineGridClass game = new MineGridClass(100, 4, 50);
 		game = new MineGridClass(GRIDSIZE, PLAYER, MINENUM);
