@@ -21,12 +21,12 @@ public class MinePlayerClass {
 	// ia[2],ia[3],ia[4] is color
 	// ia[5] is color
 	// return whether user servive
-	public int[] handleFirstPacket(int[] ia) {
-		if (ia[0] < 0) {  // failed to join
+	public int handleFirstPacket(int[] ia) {
+		if (ia[0] == 0) {  // failed to join
 			System.out.println("Fail to join the game!");
 			// disconnect
 			//return false;
-			return new int[]{-1, -1};
+			return -1;
 		} else {  // success
 			mycolor = new int[3];
 			// get color
@@ -40,7 +40,7 @@ public class MinePlayerClass {
 			//return true;
 
 		}
-		return new int[]{ia[0], ia[1]};
+		return ia[1];
 	}
 
 	

@@ -53,13 +53,12 @@ public class mine_player_mg extends Frame implements ActionListener{
 		// read server packet
 		InputStream in = socket.getInputStream();
 		DataInputStream dis = new DataInputStream(in);
-		byte[] data = new byte[48];
+		byte[] data = new byte[8];
 		dis.readFully(data);
-		int[] res = mp.handleFirstPacket(mp.decodePacket(ByteBuffer.wrap(data)));
+		int socket_num = ByteBuffer.wrap(data).getInt();
 		// if failed quit
-		if (res[0] == -1) System.exit(ABORT);
-		this.size = res[1];
-		this.game_socket = new Socket(IPAddress, res[0]);
+		if (socket_num == -1) System.exit(ABORT);
+		mine_player_mg.game_socket = new Socket(IPAddress, socket_num);
 		error_count = 0;
 		while(true) {
 			if(game_socket.isConnected()) {
@@ -73,6 +72,12 @@ public class mine_player_mg extends Frame implements ActionListener{
 				}
 			}
 		}
+		InputStream gin = game_socket.getInputStream();
+		@SuppressWarnings("unused")
+		DataInputStream gdis = new DataInputStream(gin);
+		byte[] gdata = new byte[48];
+		dis.readFully(gdata);
+		if ((this.size = mp.handleFirstPacket(mp.decodePacket(ByteBuffer.wrap(gdata)))) == -1) System.exit(ABORT);;
 		mine_player_mg.buttons = new JButton[size][size];
         initializeGui();
     }
@@ -176,12 +181,14 @@ public class mine_player_mg extends Frame implements ActionListener{
 
             @Override
             public void run() {
-            	Scanner scan = new Scanner(System.in);
-            	System.out.println("Enter host name: ");
-            	String host_name = scan.nextLine();
-            	System.out.println("Enter port number: ");
-            	int portnum = scan.nextInt();
-            	scan.close();
+            	// Scanner scan = new Scanner(System.in);
+            	// System.out.println("Enter host name: ");
+            	// String host_name = scan.nextLine();
+            	String host_name = "attu1.cs.washington.edu";
+            	// System.out.println("Enter port number: ");
+            	// int portnum = scan.nextInt();
+            	// scan.close();
+            	int portnum = 22233;
                 mine_player_mg cb = null;
 				try {
 					cb = new mine_player_mg(host_name, portnum);

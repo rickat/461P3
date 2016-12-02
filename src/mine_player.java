@@ -40,7 +40,7 @@ public class mine_player {
 			//return true;
 
 		}
-		return ia[0];
+		return ia[1];
 	}
 
 	
