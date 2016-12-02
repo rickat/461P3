@@ -28,8 +28,8 @@ import java.util.Set;
 // each player have their own board with buttons on them but no functions
 public class mine_server {
 
-	public static final int PLAYER = 4;
-	public static final int GRIDSIZE = 100;
+	public static final int PLAYER = 2;
+	public static final int GRIDSIZE = 10;
 	public static final int MINENUM = 50;
 	
 	// public GUI panel; <++++++++++++++++++++++++++++++++++++++++++++++++++++++++HERE!
