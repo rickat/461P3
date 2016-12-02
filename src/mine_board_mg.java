@@ -15,7 +15,7 @@ import java.util.Scanner;
 import javax.swing.*;
 import javax.swing.border.*;
 
-public class mine_player_mg extends Frame implements ActionListener{
+public class mine_board_mg extends Frame implements ActionListener{
 
     /**
 	 * 
@@ -30,7 +30,7 @@ public class mine_player_mg extends Frame implements ActionListener{
 	public static MinePlayerClass mp;
 	public static int[] change_color = new int[3];
 
-    mine_player_mg(String hostname, int port_num) throws IOException {
+    mine_board_mg(String hostname, int port_num) throws IOException {
     	InetAddress IPAddress = InetAddress.getByName(hostname);
 
 		// connect the server 
@@ -58,7 +58,7 @@ public class mine_player_mg extends Frame implements ActionListener{
 		int socket_num = ByteBuffer.wrap(data).getInt();
 		// if failed quit
 		if (socket_num == -1) System.exit(ABORT);
-		mine_player_mg.game_socket = new Socket(IPAddress, socket_num);
+		mine_board_mg.game_socket = new Socket(IPAddress, socket_num);
 		error_count = 0;
 		while(true) {
 			if(game_socket.isConnected()) {
@@ -78,7 +78,7 @@ public class mine_player_mg extends Frame implements ActionListener{
 		byte[] gdata = new byte[48];
 		dis.readFully(gdata);
 		if ((this.size = mp.handleFirstPacket(mp.decodePacket(ByteBuffer.wrap(gdata)))) == -1) System.exit(ABORT);;
-		mine_player_mg.buttons = new JButton[size][size];
+		mine_board_mg.buttons = new JButton[size][size];
         initializeGui();
     }
     
@@ -189,16 +189,16 @@ public class mine_player_mg extends Frame implements ActionListener{
             	// int portnum = scan.nextInt();
             	// scan.close();
             	int portnum = 22233;
-                mine_player_mg cb = null;
+                mine_board_mg cb = null;
 				try {
-					cb = new mine_player_mg(host_name, portnum);
+					cb = new mine_board_mg(host_name, portnum);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					System.exit(ABORT);
 				}
 
-                JFrame f = new JFrame("mine_player_mg");
+                JFrame f = new JFrame("mine_board_mg");
                 f.add(cb.getGui());
                 f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 f.setLocationByPlatform(true);
