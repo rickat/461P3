@@ -188,7 +188,7 @@ public class mine_server {
 			}
 			int isClosed = 0;
 			ByteBuffer bb = ByteBuffer.allocate(24);
-			while (isClosed < PLAYER) {
+			while (isClosed < PLAYER || !game.isEnd()) {
 				int readyChannels = 0;
 				try {
 					readyChannels = select.select();
