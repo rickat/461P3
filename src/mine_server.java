@@ -69,15 +69,16 @@ public class mine_server {
 		// TODO Auto-generated method stub
 		
 		// get port number
-		Scanner scan = new Scanner(System.in);
-		int port_num = scan.nextInt();
+		// Scanner scan = new Scanner(System.in);
+		// int port_num = scan.nextInt();
+		int port_num = 22233;
 		try {
 			sel = Selector.open();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		scan.close();
+		// scan.close();
 		// listen for players to join
 		// send out initial message: board size for user to create board on their end
 		/*
