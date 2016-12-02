@@ -11,12 +11,14 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 /**
  * 
  */
+import java.util.Set;
 
 /**
  * @author Yilun Hua (1428927), Shen Wang (1571169), Antony Chen ()
@@ -127,7 +129,8 @@ public class mine_server {
 		public int[][] player_color;
 		public MineGridClass game;
 		public int player_count = 0;
-		public Socket[] player_sockets;  // store player socket
+		// public Socket[] player_sockets;  // store player socket
+		public HashMap<SocketChannel, Integer> socket_map;
 		public Selector select;
 		
 		public Client_handler(ServerSocketChannel game_server) throws Exception {
@@ -136,7 +139,7 @@ public class mine_server {
 			game = new MineGridClass(GRIDSIZE, PLAYER, MINENUM);
 			// for recording each user's land
 			conquered_area = new int[PLAYER];
-			player_color = new int[PLAYER][3];
+			// player_color = new int[PLAYER][3];
 			assignPlayerColor();
 			try {
 				select = Selector.open();
@@ -144,6 +147,7 @@ public class mine_server {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			socket_map = new HashMap<>();
 		}
 		
 		@Override
@@ -165,12 +169,13 @@ public class mine_server {
 						e1.printStackTrace();
 					}
 					try {
-						client.register(select, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+						client.register(select, SelectionKey.OP_READ);
 					} catch (ClosedChannelException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					player_sockets[player_count] = client.socket();
+					// player_sockets[player_count] = client.socket();
+					socket_map.put(client, player_count);
 					byte[] ba = initialPacket();
 					try {
 						client.write(ByteBuffer.wrap(ba));
@@ -181,7 +186,71 @@ public class mine_server {
 					player_count++;
 				}
 			}
-			
+			int isClosed = 0;
+			ByteBuffer bb = ByteBuffer.allocate(24);
+			while (isClosed < PLAYER) {
+				int readyChannels = 0;
+				try {
+					readyChannels = select.select();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				if (readyChannels == 0) continue;
+				Set<SelectionKey> selectedKeys = sel.selectedKeys();
+				Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
+				while(keyIterator.hasNext()) {
+					bb.clear();
+					SelectionKey key = keyIterator.next();
+					SocketChannel sc = (SocketChannel)key.channel();
+					try{
+						if (socket_map.containsKey(sc)) {
+							int readlen = sc.read(bb);
+							if (readlen == -1) {
+								isClosed++;
+								break;
+							}
+							bb.flip();
+							while (bb.hasRemaining()) {
+								try {
+									int[] res = decodePacket(bb);
+									ByteBuffer bb1 = reportUser(res[0], res[1], res[2]);
+									for (SocketChannel scc : socket_map.keySet()) {
+										ByteBuffer bb2 = clone(bb1);  // clone and send out the bytebuffer to
+																	 // everyone
+										scc.write(bb2);
+									}
+								} catch(IOException e) {
+									isClosed++;
+									break;
+								}
+							}
+						}
+					}catch(IOException i){
+						// abort quietly
+					}
+
+				}
+				selectedKeys.clear();
+			}
+		}
+		
+		// decode the server packet
+		public int[] decodePacket(ByteBuffer bb) {
+			int[] res = new int[3];
+			for (int i = 0; i < 3; i++) {
+				res[i] = bb.getInt(i * 8);
+			}
+			return res;
+		}
+		
+		public ByteBuffer clone(ByteBuffer original) {
+		       ByteBuffer clone = ByteBuffer.allocate(original.capacity());
+		       original.rewind();//copy from the beginning
+		       clone.put(original);
+		       original.rewind();
+		       clone.flip();
+		       return clone;
 		}
 		
 		// create initial packet
@@ -208,7 +277,7 @@ public class mine_server {
 		}
 		
 		// returns a byte array for sending back result to user;
-		public byte[] reportUser(int player_num, int row, int col) {
+		public ByteBuffer reportUser(int player_num, int row, int col) {
 			int res = game.makeMove(player_num, row, col);
 			// success
 			if (res == 1) {
@@ -219,12 +288,12 @@ public class mine_server {
 				// tells the users someone dies at [row, col] and tell the users that
 				// [row, col] needs to be turned into black
 				bb.putInt(0).putInt(row).putInt(col).putInt(0).putInt(0).putInt(0);
-				return bb.array();
+				return bb;
 			} else {  // other cases, nothing changes
 				ByteBuffer bb = ByteBuffer.allocate(48);
 				// ACK is -1, telling something wasn't right and change nothing
 				bb.putInt(-1).putInt(-1).putInt(-1).putInt(-1).putInt(-1).putInt(-1);
-				return bb.array();
+				return bb;
 			}
 			ByteBuffer bb = ByteBuffer.allocate(48);
 			// success, tell the users to change [row, col] into a specific color
@@ -233,7 +302,7 @@ public class mine_server {
 			for (int i = 0; i < 3; i++) {
 				bb.putInt(player_color[player_num][i]);
 			}
-			return bb.array();
+			return bb;
 		}
 		
 		public void assignPlayerColor() {
