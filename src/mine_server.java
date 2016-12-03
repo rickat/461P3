@@ -175,12 +175,14 @@ public class mine_server {
 				}
 				if (client != null) {
 					try {
+						System.out.println("configure block");
 						client.configureBlocking(false);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 					try {
+						System.out.println("add selection key");
 						client.register(select, SelectionKey.OP_READ);
 					} catch (ClosedChannelException e1) {
 						// TODO Auto-generated catch block
@@ -188,8 +190,9 @@ public class mine_server {
 					}
 					// player_sockets[player_count] = client.socket();
 					socket_map.put(client, player_count);
+					System.out.println("Enter the write 1");
 					byte[] ba = initialPacket();
-					System.out.println("Enter the write");
+					System.out.println("Enter the write 2");
 					try {
 						client.write(ByteBuffer.wrap(ba));
 					} catch (IOException e) {
