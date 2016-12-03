@@ -188,7 +188,7 @@ public class mine_board_mg extends Frame implements ActionListener{
             	// System.out.println("Enter port number: ");
             	// int portnum = scan.nextInt();
             	// scan.close();
-            	int portnum = 22233;
+            	int portnum = 12234;
                 mine_board_mg cb = null;
 				try {
 					cb = new mine_board_mg(host_name, portnum);
