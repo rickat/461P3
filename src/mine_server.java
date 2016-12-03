@@ -118,12 +118,17 @@ public class mine_server {
 				count++;
 				System.out.println("sent first packet");
 				client.write(bb1);
+				System.out.println(bb1.getInt());
+				System.out.println("finish write");
 				if (count == PLAYER) {
+					System.out.println("ready to bind");
 					portnumg = new InetSocketAddress(22334);
 					while (ngs == null) {
+						System.out.println("start");
 						ngs = ServerSocketChannel.open();
 						ngs.bind(portnumg);
 					}
+					System.out.println("finish bind");
 					count = 0;
 					bb1 = ByteBuffer.allocate(8);
 					bb1.putInt(22334);
