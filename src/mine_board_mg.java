@@ -49,13 +49,16 @@ public class mine_board_mg extends Frame implements ActionListener{
 				}
 			}
 		}
+		System.out.println("start initialize mp");
 		mp = new MinePlayerClass();
 		// read server packet
 		InputStream in = socket.getInputStream();
 		DataInputStream dis = new DataInputStream(in);
 		byte[] data = new byte[8];
 		dis.readFully(data);
+		System.out.println("finish read");
 		int socket_num = ByteBuffer.wrap(data).getInt();
+		System.out.println("socket num: " + socket_num);
 		// if failed quit
 		if (socket_num == -1) System.exit(ABORT);
 		mine_board_mg.game_socket = new Socket(IPAddress, socket_num);
