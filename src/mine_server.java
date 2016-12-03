@@ -110,7 +110,7 @@ public class mine_server {
 			ngs.bind(portnumg);
 		}
 		ByteBuffer bb1 = ByteBuffer.allocate(8);
-		bb1.putInt(ngs.socket().getLocalPort());
+		bb1.putInt(23456);
 		new Thread(new Client_handler(ngs)).start();
 		while(true){
 			SocketChannel client = scs.accept();
@@ -124,7 +124,7 @@ public class mine_server {
 					}
 					count = 0;
 					bb1 = ByteBuffer.allocate(8);
-					bb1.putInt(ngs.socket().getLocalPort());
+					bb1.putInt(23456);
 					new Thread(new Client_handler(ngs)).start();
 				}
 			}
