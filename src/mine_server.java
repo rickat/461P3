@@ -188,6 +188,7 @@ public class mine_server {
 					// player_sockets[player_count] = client.socket();
 					socket_map.put(client, player_count);
 					byte[] ba = initialPacket();
+					System.out.println("Enter the write");
 					try {
 						client.write(ByteBuffer.wrap(ba));
 					} catch (IOException e) {
