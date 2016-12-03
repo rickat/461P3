@@ -296,12 +296,12 @@ public class mine_server {
 				// maps them MAY NEED IT, BUT NOT FOR NOW
 				// client_info.put(s, player_count);
 				// add information
-				bb.putInt(1).putInt(GRIDSIZE);
+				bb.putInt(0, 1).putInt(1, GRIDSIZE);
 				// put in the color
 				for (int i = 0; i < 3; i++) {
-					bb.putInt(player_color[player_count][i]);
+					bb.putInt(i + 2, player_color[player_count][i]);
 				}
-				bb.putInt(player_count);
+				bb.putInt(5, player_count);
 			} else {  // cannot fit
 				// ERROR message
 				bb.putInt(0).putInt(-1).putInt(-1).putInt(-1).putInt(-1).putInt(-1);
