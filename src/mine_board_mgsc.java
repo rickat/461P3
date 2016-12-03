@@ -145,9 +145,9 @@ public class mine_board_mgsc extends Frame implements ActionListener{
  			return false;
  		} else if (ia[0] == 0) {  // explode case
  			setColor(ia[1], ia[2], new int[]{ia[3], ia[4], ia[5]});
- 			if (ia[3] == mine_player.mycolor[0]
- 					&& ia[4] == mine_player.mycolor[1]
- 					&& ia[5] == mine_player.mycolor[2]) {  // it was this user who exploded, disconnect
+ 			if (ia[3] == MinePlayerClass.mycolor[0]
+ 					&& ia[4] == MinePlayerClass.mycolor[1]
+ 					&& ia[5] == MinePlayerClass.mycolor[2]) {  // it was this user who exploded, disconnect
  				System.out.println("YOU EXPLODED");
  				return false;
  			}
