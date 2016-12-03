@@ -167,7 +167,8 @@ public class mine_server {
 			while (player_count < PLAYER) {
 				SocketChannel client = null;
 				try {
-					 client = game_server.accept();
+					System.out.println("ready to accept");
+					client = game_server.accept();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
