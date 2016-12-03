@@ -116,15 +116,17 @@ public class mine_server {
 			SocketChannel client = scs.accept();
 			if (client != null) {
 				count++;
+				System.out.println("sent first packet");
 				client.write(bb1);
 				if (count == PLAYER) {
+					portnumg = new InetSocketAddress(22334);
 					while (ngs == null) {
 						ngs = ServerSocketChannel.open();
 						ngs.bind(portnumg);
 					}
 					count = 0;
 					bb1 = ByteBuffer.allocate(8);
-					bb1.putInt(23456);
+					bb1.putInt(22334);
 					new Thread(new Client_handler(ngs)).start();
 				}
 			}
