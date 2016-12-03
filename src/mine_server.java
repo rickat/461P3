@@ -118,7 +118,7 @@ public class mine_server {
 				count++;
 				System.out.println("sent first packet");
 				client.write(bb1);
-				System.out.println(bb1.getInt());
+				System.out.println(bb1.getInt(0));
 				System.out.println("finish write");
 				if (count == PLAYER) {
 					System.out.println("ready to bind");
