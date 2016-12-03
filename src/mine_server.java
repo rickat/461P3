@@ -1,4 +1,8 @@
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -113,11 +117,15 @@ public class mine_server {
 		bb1.putInt(23456);
 		new Thread(new Client_handler(ngs)).start();
 		while(true){
-			SocketChannel client = scs.accept();
+			
+			SocketChannel c = scs.accept();
+			Socket client = c.socket();
 			if (client != null) {
 				count++;
 				System.out.println("sent first packet");
-				client.write(bb1);
+				OutputStream in = client.getOutputStream();
+				DataOutputStream dis = new DataOutputStream(in);
+				dis.write(bb1.array());
 				System.out.println(bb1.getInt(0));
 				System.out.println("finish write");
 				if (count == PLAYER) {
