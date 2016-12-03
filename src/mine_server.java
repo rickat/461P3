@@ -169,6 +169,8 @@ public class mine_server {
 				try {
 					System.out.println("ready to accept");
 					client = game_server.accept();
+					assert(client !=null);
+					System.out.println("client get accepted");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
