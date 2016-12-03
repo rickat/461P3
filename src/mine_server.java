@@ -71,7 +71,7 @@ public class mine_server {
 		// get port number
 		// Scanner scan = new Scanner(System.in);
 		// int port_num = scan.nextInt();
-		int port_num = 22233;
+		int port_num = 12234;
 		try {
 			sel = Selector.open();
 		} catch (IOException e1) {
@@ -103,21 +103,29 @@ public class mine_server {
 		}
 		// accepts PLAYER players into game
 		int count = 0;
-		ServerSocket ngs = new ServerSocket(0);
+		ServerSocketChannel ngs = null;
+		InetSocketAddress portnumg = new InetSocketAddress(23456);
+		while (ngs == null) {
+			ngs = ServerSocketChannel.open();
+			ngs.bind(portnumg);
+		}
 		ByteBuffer bb1 = ByteBuffer.allocate(8);
-		bb1.putInt(ngs.getLocalPort());
-		new Thread(new Client_handler(ngs.getChannel())).start();
+		bb1.putInt(ngs.socket().getLocalPort());
+		new Thread(new Client_handler(ngs)).start();
 		while(true){
 			SocketChannel client = scs.accept();
 			if (client != null) {
 				count++;
 				client.write(bb1);
 				if (count == PLAYER) {
-					ngs = new ServerSocket(0);
+					while (ngs == null) {
+						ngs = ServerSocketChannel.open();
+						ngs.bind(portnumg);
+					}
 					count = 0;
 					bb1 = ByteBuffer.allocate(8);
-					bb1.putInt(ngs.getLocalPort());
-					new Thread(new Client_handler(ngs.getChannel())).start();
+					bb1.putInt(ngs.socket().getLocalPort());
+					new Thread(new Client_handler(ngs)).start();
 				}
 			}
 		}
@@ -136,6 +144,7 @@ public class mine_server {
 		
 		public Client_handler(ServerSocketChannel game_server) throws Exception {
 			this.game_server = game_server;
+			if (game_server == null) System.out.println("Game server is null");
 			player_color = new int[PLAYER][3];
 			// MineGridClass game = new MineGridClass(100, 4, 50);
 			game = new MineGridClass(GRIDSIZE, PLAYER, MINENUM);
