@@ -52,7 +52,7 @@ public class mine_board_mgsc extends Frame implements ActionListener{
 		ByteBuffer data = ByteBuffer.allocate(8);
 		socket.read(data);
 		System.out.println("finish read");
-		int socket_num = data.getInt();
+		int socket_num = data.getInt(0);
 		System.out.println("socket num: " + socket_num);
 		// if failed quit
 		if (socket_num == -1) System.exit(ABORT);
@@ -73,13 +73,19 @@ public class mine_board_mgsc extends Frame implements ActionListener{
 		}
 		ByteBuffer gdata = ByteBuffer.allocate(48);
 		game_socket.read(gdata);
-		if ((this.size = mp.handleFirstPacket(mp.decodePacket(gdata))) == -1) System.exit(ABORT);;
+		int[] iah = mp.decodePacket(gdata);
+		for (int i = 0; i < iah.length; i++) {
+			System.out.println(iah[i]);
+		}
+		if ((this.size = mp.handleFirstPacket(iah)) == -1) System.exit(ABORT);;
 		mine_board_mgsc.buttons = new JButton[size][size];
+		System.out.println(size);
         initializeGui();
     }
     
     public void initializeGui() {
         // set up the main GUI
+    	System.out.println("inside initialize gui");
         gui.setBorder(new EmptyBorder(5, 5, 5, 5));
         // gui.add(new JLabel("?"), BorderLayout.LINE_START);
 
@@ -106,7 +112,7 @@ public class mine_board_mgsc extends Frame implements ActionListener{
                 mineBoard.add(buttons[ii][jj]);
             }
         }
-        
+        System.out.println("end initialization");
         
     }
 
@@ -182,13 +188,14 @@ public class mine_board_mgsc extends Frame implements ActionListener{
             	// System.out.println("Enter port number: ");
             	// int portnum = scan.nextInt();
             	// scan.close();
-            	int portnum = 12234;
+            	int portnum = 11223;
                 mine_board_mgsc cb = null;
 				try {
 					cb = new mine_board_mgsc(host_name, portnum);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					System.out.println("abort");
 					System.exit(ABORT);
 				}
 
@@ -203,6 +210,7 @@ public class mine_board_mgsc extends Frame implements ActionListener{
                 // ensures the minimum size is enforced.
                 f.setMinimumSize(f.getSize());
                 f.setVisible(true);
+                System.out.println("done setting up gui");
                 try {
 					readFromServer();
 				} catch (IOException e) {

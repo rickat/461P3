@@ -75,7 +75,7 @@ public class mine_server_sc {
 		// get port number
 		// Scanner scan = new Scanner(System.in);
 		// int port_num = scan.nextInt();
-		int port_num = 12234;
+		int port_num = 11223;
 		try {
 			sel = Selector.open();
 		} catch (IOException e1) {
@@ -124,7 +124,7 @@ public class mine_server_sc {
 				client.write(bb1);
 				System.out.println(bb1.getInt(0));
 				System.out.println("finish write");
-				if (count == PLAYER) {
+				if (count >= PLAYER) {
 					System.out.println("ready to bind");
 					portnumg = new InetSocketAddress(22334);
 					while (ngs == null) {
@@ -134,8 +134,8 @@ public class mine_server_sc {
 					}
 					System.out.println("finish bind");
 					count = 0;
-					bb1 = ByteBuffer.allocate(8);
-					bb1.putInt(22334);
+					ByteBuffer bb2 = ByteBuffer.allocate(8);
+					bb2.putInt(22334);
 					new Thread(new Client_handler(ngs)).start();
 				}
 			}
