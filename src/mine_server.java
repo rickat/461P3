@@ -136,6 +136,7 @@ public class mine_server {
 		
 		public Client_handler(ServerSocketChannel game_server) throws Exception {
 			this.game_server = game_server;
+			player_color = new int[PLAYER][3];
 			// MineGridClass game = new MineGridClass(100, 4, 50);
 			game = new MineGridClass(GRIDSIZE, PLAYER, MINENUM);
 			// for recording each user's land
