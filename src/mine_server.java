@@ -68,14 +68,13 @@ public class mine_server {
 	 * |ACK|row #|col #|color[3]|
 	 * --------------------------
 	 */
-	@SuppressWarnings("resource")
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		
 		// get port number
 		// Scanner scan = new Scanner(System.in);
 		// int port_num = scan.nextInt();
-		int port_num = 12234;
+		int port_num = 11223;
 		try {
 			sel = Selector.open();
 		} catch (IOException e1) {
@@ -296,12 +295,12 @@ public class mine_server {
 				// maps them MAY NEED IT, BUT NOT FOR NOW
 				// client_info.put(s, player_count);
 				// add information
-				bb.putInt(0, 1).putInt(1, GRIDSIZE);
+				bb.putInt(0, 1).putInt(8, GRIDSIZE);
 				// put in the color
 				for (int i = 0; i < 3; i++) {
-					bb.putInt(i + 2, player_color[player_count][i]);
+					bb.putInt((i + 2) * 8, player_color[player_count][i]);
 				}
-				bb.putInt(5, player_count);
+				bb.putInt(40, player_count);
 			} else {  // cannot fit
 				// ERROR message
 				bb.putInt(0).putInt(-1).putInt(-1).putInt(-1).putInt(-1).putInt(-1);
