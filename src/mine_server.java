@@ -227,17 +227,17 @@ public class mine_server {
 			ByteBuffer bb = ByteBuffer.allocate(24);
 			System.out.println("start the game");
 			while (isClosed < PLAYER || !game.isEnd()) {
-				System.out.println("enter while loop 229");
+				// System.out.println("enter while loop 229");
 				int readyChannels = 0;
 				try {
-					System.out.println("selector");
+					// System.out.println("selector");
 					readyChannels = select.select();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				if (readyChannels == 0) {
-					System.out.println("continue");
+					// System.out.println("continue");
 					continue;
 				}
 				Set<SelectionKey> selectedKeys = select.selectedKeys();
@@ -262,10 +262,11 @@ public class mine_server {
 									for (SocketChannel scc : socket_map.keySet()) {
 										ByteBuffer bb2 = clone(bb1);  // clone and send out the bytebuffer to
 																	 // everyone
-										System.out.println("start to write");
+										System.out.println("start to write " + socket_map.get(scc));
 										scc.write(bb2);
 									}
 								} catch(IOException e) {
+									System.out.println("exception in bb.hasRemaining!");
 									isClosed++;
 									break;
 								}
@@ -273,6 +274,8 @@ public class mine_server {
 						}
 					}catch(IOException i){
 						// abort quietly
+						isClosed++;
+						System.out.println("exception in try catch 278");
 					}
 
 				}
