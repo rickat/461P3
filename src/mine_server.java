@@ -243,7 +243,7 @@ public class mine_server {
 				Set<SelectionKey> selectedKeys = select.selectedKeys();
 				Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
 				while(keyIterator.hasNext()) {
-					System.out.println("have something to read");
+					// System.out.println("have something to read");
 					bb.clear();
 					SelectionKey key = keyIterator.next();
 					SocketChannel sc = (SocketChannel)key.channel();
@@ -355,7 +355,10 @@ public class mine_server {
 				ByteBuffer bb = ByteBuffer.allocate(24);
 				// tells the users someone dies at [row, col] and tell the users that
 				// [row, col] needs to be turned into black
-				bb.putInt(0, 0).putInt(4, row).putInt(8, col).putInt(12, 0).putInt(16, 0).putInt(20, 0);
+				bb.putInt(0, 0).putInt(4, row).putInt(8, col);
+				for (int i = 0; i < 3; i++) {
+					bb.putInt((i + 3) * 4, player_color[player_num][i]);
+				}
 				return bb;
 			} else {  // other cases, nothing changes
 				ByteBuffer bb = ByteBuffer.allocate(24);
