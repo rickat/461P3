@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -178,7 +179,7 @@ public class mine_board_mgsc extends Frame implements ActionListener{
  		System.out.println("Your game is ended");
  	}
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InvocationTargetException, InterruptedException {
         Runnable r = new Runnable() {
 
             @Override
@@ -213,15 +214,24 @@ public class mine_board_mgsc extends Frame implements ActionListener{
                 f.setMinimumSize(f.getSize());
                 f.setVisible(true);
                 System.out.println("done setting up gui");
+                /*
                 try {
 					readFromServer();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+                */
             }
         };
-        SwingUtilities.invokeLater(r);
+        // SwingUtilities.invokeLater(r);
+        SwingUtilities.invokeAndWait(r);
+        try {
+			readFromServer();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public void actionPerformed(ActionEvent e) {
