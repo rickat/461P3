@@ -166,7 +166,7 @@ public class mine_board_mg extends Frame implements ActionListener{
  			System.out.println("Error in game, exiting...");
  			return false;
  		} else if (ia[0] == 0) {  // explode case
- 			setColor(ia[1], ia[2], new int[]{ia[3], ia[4], ia[5]});
+ 			setColor(ia[1], ia[2], new int[]{0, 0, 0});
  			if (ia[3] == MinePlayerClass.mycolor[0]
  					&& ia[4] == MinePlayerClass.mycolor[1]
  					&& ia[5] == MinePlayerClass.mycolor[2]) {  // it was this user who exploded, disconnect
