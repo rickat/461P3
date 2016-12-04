@@ -177,7 +177,6 @@ public class mine_server_sc {
 		public HashMap<SocketChannel, Integer> socket_map;
 		public Selector select;
 		public int alive_player = PLAYER;
-		public SocketChannel toBeRemoved = null;
 		
 		public Client_handler(ServerSocketChannel game_server) throws Exception {
 			this.game_server = game_server;
@@ -283,9 +282,14 @@ public class mine_server_sc {
 																 // everyone
 									System.out.println("start to write " + socket_map.get(scc));
 									scc.write(bb2);
-									if (toBeRemoved != null) {
-										socket_map.remove(toBeRemoved);
-										toBeRemoved = null;
+									Iterator<SocketChannel> it = socket_map.keySet().iterator();
+									while (it.hasNext()) {
+										SocketChannel scce = it.next();
+										int x = socket_map.get(scce);
+										System.out.println("start to write " + x);
+										if (x == res[0]) {
+											it.remove();
+										}
 									}
 									if (alive_player == 1) {
 										ByteBuffer bb3 = ByteBuffer.allocate(24);
@@ -361,16 +365,6 @@ public class mine_server_sc {
 			} else if (res == -1) {  // player explodes
 				conquered_area[player_num] = -1;  // indicates player_num dies
 				ByteBuffer bb = ByteBuffer.allocate(24);
-				Iterator<SocketChannel> it = socket_map.keySet().iterator();
-				while (it.hasNext()) {
-					SocketChannel scc = it.next();
-					int x = socket_map.get(scc);
-					System.out.println("start to write " + x);
-					if (x == player_num) {
-						// it.remove();
-						toBeRemoved = scc;
-					}
-				}
 				// tells the users someone dies at [row, col] and tell the users that
 				// [row, col] needs to be turned into black
 				bb.putInt(0, 0).putInt(4, row).putInt(8, col);
