@@ -362,7 +362,7 @@ public class mine_server_sc {
 					int x = socket_map.get(scc);
 					System.out.println("start to write " + x);
 					if (x == player_num) {
-						socket_map.remove(scc);
+						it.remove();
 					}
 				}
 				// tells the users someone dies at [row, col] and tell the users that
