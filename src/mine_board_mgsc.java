@@ -59,6 +59,7 @@ public class mine_board_mgsc extends Frame implements ActionListener{
 		if (socket_num == -1) System.exit(ABORT);
 		mine_board_mgsc.game_socket = SocketChannel.open(); 
 		game_socket.connect(new InetSocketAddress(IPAddress, socket_num));
+		game_socket.configureBlocking(false);
 		error_count = 0;
 		while(true) {
 			if(game_socket.isConnected()) {
