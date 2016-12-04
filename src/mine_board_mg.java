@@ -272,6 +272,7 @@ public class mine_board_mg extends Frame implements ActionListener{
 						}
 						// scoket send packet to server
 						game_socket.write(resbb);
+						System.out.println("after write");
 						done = true;
 						break;
 					}catch(IOException i) {

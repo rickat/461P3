@@ -356,6 +356,15 @@ public class mine_server_sc {
 			} else if (res == -1) {  // player explodes
 				conquered_area[player_num] = -1;  // indicates player_num dies
 				ByteBuffer bb = ByteBuffer.allocate(24);
+				Iterator<SocketChannel> it = socket_map.keySet().iterator();
+				while (it.hasNext()) {
+					SocketChannel scc = it.next();
+					int x = socket_map.get(scc);
+					System.out.println("start to write " + x);
+					if (x == player_num) {
+						socket_map.remove(scc);
+					}
+				}
 				// tells the users someone dies at [row, col] and tell the users that
 				// [row, col] needs to be turned into black
 				bb.putInt(0, 0).putInt(4, row).putInt(8, col);
