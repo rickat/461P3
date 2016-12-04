@@ -247,7 +247,7 @@ public class mine_board_mgsc extends Frame implements ActionListener{
 						System.out.println(game_socket.isConnected());
 						System.out.println(game_socket.isBlocking());
 						ByteBuffer resbb = ByteBuffer.wrap(res);
-						for (int i = 0; i < 6; i++) {
+						for (int i = 0; i < 3; i++) {
 							System.out.println(resbb.getInt(i * 4));
 						}
 						// scoket send packet to server
