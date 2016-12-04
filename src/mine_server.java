@@ -294,16 +294,16 @@ public class mine_server {
 		public byte[] initialPacket() {
 			ByteBuffer bb = ByteBuffer.allocate(48);
 			if (player_count < PLAYER) {
-				player_count++;
 				// maps them MAY NEED IT, BUT NOT FOR NOW
 				// client_info.put(s, player_count);
 				// add information
 				bb.putInt(0, 1).putInt(8, GRIDSIZE);
 				// put in the color
 				for (int i = 0; i < 3; i++) {
-					bb.putInt((i + 2) * 8, player_color[player_count - 1][i]);
+					bb.putInt((i + 2) * 8, player_color[player_count][i]);
 				}
 				bb.putInt(40, player_count);
+				player_count++;
 			} else {  // cannot fit
 				// ERROR message
 				bb.putInt(0, 0).putInt(8, -1).putInt(16, -1).putInt(24, -1).putInt(32, -1).putInt(40, -1);
