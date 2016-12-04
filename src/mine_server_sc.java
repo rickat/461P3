@@ -177,6 +177,7 @@ public class mine_server_sc {
 		public HashMap<SocketChannel, Integer> socket_map;
 		public Selector select;
 		public int alive_player = PLAYER;
+		public SocketChannel toBeRemoved = null;
 		
 		public Client_handler(ServerSocketChannel game_server) throws Exception {
 			this.game_server = game_server;
@@ -282,6 +283,10 @@ public class mine_server_sc {
 																 // everyone
 									System.out.println("start to write " + socket_map.get(scc));
 									scc.write(bb2);
+									if (toBeRemoved != null) {
+										socket_map.remove(toBeRemoved);
+										toBeRemoved = null;
+									}
 									if (alive_player == 1) {
 										ByteBuffer bb3 = ByteBuffer.allocate(24);
 										bb3.putInt(0, 2).putInt(4, 0).putInt(8, 0).putInt(12, 255).putInt(16, 0).putInt(20, 0);
@@ -362,7 +367,8 @@ public class mine_server_sc {
 					int x = socket_map.get(scc);
 					System.out.println("start to write " + x);
 					if (x == player_num) {
-						it.remove();
+						// it.remove();
+						toBeRemoved = scc;
 					}
 				}
 				// tells the users someone dies at [row, col] and tell the users that
