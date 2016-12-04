@@ -202,7 +202,7 @@ public class mine_server {
 					}
 					try {
 						System.out.println("add selection key");
-						client.register(select, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+						client.register(select, SelectionKey.OP_READ);
 					} catch (ClosedChannelException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
