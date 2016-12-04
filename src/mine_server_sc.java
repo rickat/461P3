@@ -32,33 +32,33 @@ import java.util.Set;
 // each player have their own board with buttons on them but no functions
 public class mine_server_sc {
 
-	public static final int PLAYER = 2;
-	public static final int GRIDSIZE = 10;
+	public static final int PLAYER = 3;
+	public static final int GRIDSIZE = 20;
 	public static final int MINENUM = 50;
 	
 	// public GUI panel; <++++++++++++++++++++++++++++++++++++++++++++++++++++++++HERE!
 	/**
 	 * @param args
 	 */
-	public static Selector sel;
+	// public static Selector sel;
 	// maps a socket to player ID
 	// public static HashMap<Socket, Integer> client_info;
 	
 	/*
-	 * Initial packet from server to client: 48 bytes
+	 * Initial packet from server to client: 24 bytes
 	 * ACK is 1 for success
 	 *     is 0 for unable to join
 	 * -----------------------------------------
 	 * |ACK|GRID SIZE|PLAYER COLOR[3]|PLAYER ID|
 	 * -----------------------------------------
 	 * 
-	 * User request packet: 24 bytes
+	 * User request packet: 12 bytes
 	 * player ID wants [row][col]
 	 * -----------------------
 	 * |Player ID|row #|col #|
 	 * -----------------------
 	 * 
-	 * Server to client later packet: 48 bytes
+	 * Server to client later packet: 24 bytes
 	 * user update [row][col] to color 
 	 * ACK is -1 for error, change nothing
 	 *     is 0 for a player death, turn block into black
@@ -75,12 +75,14 @@ public class mine_server_sc {
 		// Scanner scan = new Scanner(System.in);
 		// int port_num = scan.nextInt();
 		int port_num = 11223;
+		/*
 		try {
 			sel = Selector.open();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		*/
 		// scan.close();
 		// listen for players to join
 		// send out initial message: board size for user to create board on their end
@@ -96,6 +98,7 @@ public class mine_server_sc {
 		 * case 1: only one player survived, report the winner
 		 * case 2: more than one survived, player with more land wins, report the winner
 		 */
+		Random rand = new Random();
 		InetSocketAddress portnum = new InetSocketAddress(port_num);
 		ServerSocketChannel scs = ServerSocketChannel.open();
 		try {
@@ -106,11 +109,18 @@ public class mine_server_sc {
 		}
 		// accepts PLAYER players into game
 		int count = 0;
+		int nportnum = 23456;
 		ServerSocketChannel ngs = null;
-		InetSocketAddress portnumg = new InetSocketAddress(23456);
 		while (ngs == null) {
+			InetSocketAddress portnumg = new InetSocketAddress(nportnum);
 			ngs = ServerSocketChannel.open();
-			ngs.bind(portnumg);
+			try {
+				ngs.bind(portnumg);
+			} catch (IOException e) {
+				System.out.println("Could not listen on port " + port_num);
+				nportnum = rand.nextInt(55536) + 10000;
+				ngs = null;
+			}
 		}
 		ByteBuffer bb1 = ByteBuffer.allocate(4);
 		bb1.putInt(23456);
@@ -130,12 +140,20 @@ public class mine_server_sc {
 				
 				if (count == PLAYER) {
 					System.out.println("ready to bind");
-					portnumg = new InetSocketAddress(22334);
+					
 					ServerSocketChannel nngs = null;
 					while (nngs == null) {
+						int nnportnum = rand.nextInt(55536) + 10000;
+						InetSocketAddress portnumg = new InetSocketAddress(nnportnum);
 						System.out.println("start");
 						nngs = ServerSocketChannel.open();
-						nngs.bind(portnumg);
+						try {
+							nngs.bind(portnumg);
+						} catch (IOException e) {
+							System.out.println("Could not listen on port " + port_num);
+							nnportnum = rand.nextInt(55536) + 10000;
+							nngs = null;
+						}
 					}
 					System.out.println("finish bind");
 					count = 0;
@@ -158,6 +176,7 @@ public class mine_server_sc {
 		// public Socket[] player_sockets;  // store player socket
 		public HashMap<SocketChannel, Integer> socket_map;
 		public Selector select;
+		public int alive_player = PLAYER;
 		
 		public Client_handler(ServerSocketChannel game_server) throws Exception {
 			this.game_server = game_server;
@@ -225,23 +244,23 @@ public class mine_server_sc {
 			ByteBuffer bb = ByteBuffer.allocate(24);
 			System.out.println("start the game");
 			while (isClosed < PLAYER || !game.isEnd()) {
-				System.out.println("enter while loop 229");
+				// System.out.println("enter while loop 229");
 				int readyChannels = 0;
 				try {
-					System.out.println("selector");
+					// System.out.println("selector");
 					readyChannels = select.select();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				if (readyChannels == 0) {
-					System.out.println("continue");
+					// System.out.println("continue");
 					continue;
 				}
-				Set<SelectionKey> selectedKeys = sel.selectedKeys();
+				Set<SelectionKey> selectedKeys = select.selectedKeys();
 				Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
 				while(keyIterator.hasNext()) {
-					System.out.println("have something to read");
+					// System.out.println("have something to read");
 					bb.clear();
 					SelectionKey key = keyIterator.next();
 					SocketChannel sc = (SocketChannel)key.channel();
@@ -252,30 +271,39 @@ public class mine_server_sc {
 								isClosed++;
 								break;
 							}
-							bb.flip();
-							while (bb.hasRemaining()) {
-								try {
-									int[] res = decodePacket(bb);
-									ByteBuffer bb1 = reportUser(res[0], res[1], res[2]);
-									for (SocketChannel scc : socket_map.keySet()) {
-										ByteBuffer bb2 = clone(bb1);  // clone and send out the bytebuffer to
-																	 // everyone
-										System.out.println("start to write");
-										scc.write(bb2);
+							try {
+								int[] res = decodePacket(bb);
+								bb.clear();
+								System.out.println(bb.hasRemaining());
+								ByteBuffer bb1 = reportUser(res[0], res[1], res[2]);
+								
+								for (SocketChannel scc : socket_map.keySet()) {
+									ByteBuffer bb2 = clone(bb1);  // clone and send out the bytebuffer to
+																 // everyone
+									System.out.println("start to write " + socket_map.get(scc));
+									scc.write(bb2);
+									if (alive_player == 1) {
+										ByteBuffer bb3 = ByteBuffer.allocate(24);
+										bb3.putInt(0, 2).putInt(4, 0).putInt(8, 0).putInt(12, 255).putInt(16, 0).putInt(20, 0);
+										scc.write(bb3);
 									}
-								} catch(IOException e) {
-									isClosed++;
-									break;
 								}
+							} catch(IOException e) {
+								System.out.println("exception in bb.hasRemaining!");
+								isClosed++;
+								break;
 							}
 						}
 					}catch(IOException i){
 						// abort quietly
+						isClosed++;
+						System.out.println("exception in try catch 278");
 					}
 
 				}
 				selectedKeys.clear();
 			}
+			System.out.println("Game over");
 		}
 		
 		// decode the server packet
@@ -330,7 +358,11 @@ public class mine_server_sc {
 				ByteBuffer bb = ByteBuffer.allocate(24);
 				// tells the users someone dies at [row, col] and tell the users that
 				// [row, col] needs to be turned into black
-				bb.putInt(0, 0).putInt(4, row).putInt(8, col).putInt(12, 0).putInt(16, 0).putInt(20, 0);
+				bb.putInt(0, 0).putInt(4, row).putInt(8, col);
+				for (int i = 0; i < 3; i++) {
+					bb.putInt((i + 3) * 4, player_color[player_num][i]);
+				}
+				alive_player--;
 				return bb;
 			} else {  // other cases, nothing changes
 				ByteBuffer bb = ByteBuffer.allocate(24);
