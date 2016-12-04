@@ -225,14 +225,19 @@ public class mine_server {
 			ByteBuffer bb = ByteBuffer.allocate(24);
 			System.out.println("start the game");
 			while (isClosed < PLAYER || !game.isEnd()) {
+				System.out.println("enter while loop 229");
 				int readyChannels = 0;
 				try {
+					System.out.println("selector");
 					readyChannels = select.select();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				if (readyChannels == 0) continue;
+				if (readyChannels == 0) {
+					System.out.println("continue");
+					continue;
+				}
 				Set<SelectionKey> selectedKeys = sel.selectedKeys();
 				Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
 				while(keyIterator.hasNext()) {
