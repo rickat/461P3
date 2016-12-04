@@ -223,6 +223,7 @@ public class mine_server {
 			}
 			int isClosed = 0;
 			ByteBuffer bb = ByteBuffer.allocate(24);
+			System.out.println("start the game");
 			while (isClosed < PLAYER || !game.isEnd()) {
 				int readyChannels = 0;
 				try {
@@ -235,6 +236,7 @@ public class mine_server {
 				Set<SelectionKey> selectedKeys = sel.selectedKeys();
 				Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
 				while(keyIterator.hasNext()) {
+					System.out.println("have something to read");
 					bb.clear();
 					SelectionKey key = keyIterator.next();
 					SocketChannel sc = (SocketChannel)key.channel();
@@ -253,6 +255,7 @@ public class mine_server {
 									for (SocketChannel scc : socket_map.keySet()) {
 										ByteBuffer bb2 = clone(bb1);  // clone and send out the bytebuffer to
 																	 // everyone
+										System.out.println("start to write");
 										scc.write(bb2);
 									}
 								} catch(IOException e) {
