@@ -213,15 +213,15 @@ public class mine_board_mg extends Frame implements ActionListener{
                 f.setMinimumSize(f.getSize());
                 f.setVisible(true);
                 System.out.println("done setting up gui");
-                try {
-					readFromServer();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
             }
         };
         SwingUtilities.invokeLater(r);
+        try {
+			readFromServer();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public void actionPerformed(ActionEvent e) {
