@@ -167,6 +167,7 @@ public class mine_board_mgsc extends Frame implements ActionListener{
 
  	public static void readFromServer() throws IOException {
  		while (true) {
+ 			System.out.println("read from server");
  			ByteBuffer data = ByteBuffer.allocate(48);
  			game_socket.read(data);
  			int[] a = mp.decodePacket(data);
