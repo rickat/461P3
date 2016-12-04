@@ -47,8 +47,8 @@ public class MinePlayerClass {
 
 	// get the request and prepare the packet
 	public byte[] action(int row, int col) {
-		ByteBuffer bb = ByteBuffer.allocate(24);
-		bb.putInt(player_id).putInt(row).putInt(col);
+		ByteBuffer bb = ByteBuffer.allocate(12);
+		bb.putInt(0, player_id).putInt(4, row).putInt(8, col);
 		return bb.array();
 	}
 
@@ -56,7 +56,7 @@ public class MinePlayerClass {
 	public int[] decodePacket(ByteBuffer bb) {
 		int[] res = new int[6];
 		for (int i = 0; i < 6; i++) {
-			res[i] = bb.getInt(i * 8);
+			res[i] = bb.getInt(i * 4);
 		}
 		return res;
 	}

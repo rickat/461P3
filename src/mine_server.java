@@ -112,7 +112,7 @@ public class mine_server {
 			ngs = ServerSocketChannel.open();
 			ngs.bind(portnumg);
 		}
-		ByteBuffer bb1 = ByteBuffer.allocate(8);
+		ByteBuffer bb1 = ByteBuffer.allocate(4);
 		bb1.putInt(23456);
 		new Thread(new Client_handler(ngs)).start();
 		while(true){
@@ -139,7 +139,7 @@ public class mine_server {
 					}
 					System.out.println("finish bind");
 					count = 0;
-					bb1 = ByteBuffer.allocate(8);
+					bb1 = ByteBuffer.allocate(4);
 					bb1.putInt(22334);
 					new Thread(new Client_handler(nngs)).start();
 				}
@@ -282,7 +282,7 @@ public class mine_server {
 		public int[] decodePacket(ByteBuffer bb) {
 			int[] res = new int[3];
 			for (int i = 0; i < 3; i++) {
-				res[i] = bb.getInt(i * 8);
+				res[i] = bb.getInt(i * 4);
 			}
 			return res;
 		}
@@ -300,21 +300,21 @@ public class mine_server {
 		// if player_count == PLAYER then ACK is 0
 		// else ACK is 1 and return back the information needed
 		public byte[] initialPacket() {
-			ByteBuffer bb = ByteBuffer.allocate(48);
+			ByteBuffer bb = ByteBuffer.allocate(24);
 			if (player_count < PLAYER) {
 				// maps them MAY NEED IT, BUT NOT FOR NOW
 				// client_info.put(s, player_count);
 				// add information
-				bb.putInt(0, 1).putInt(8, GRIDSIZE);
+				bb.putInt(0, 1).putInt(4, GRIDSIZE);
 				// put in the color
 				for (int i = 0; i < 3; i++) {
-					bb.putInt((i + 2) * 8, player_color[player_count][i]);
+					bb.putInt((i + 2) * 4, player_color[player_count][i]);
 				}
-				bb.putInt(40, player_count);
+				bb.putInt(20, player_count);
 				player_count++;
 			} else {  // cannot fit
 				// ERROR message
-				bb.putInt(0, 0).putInt(8, -1).putInt(16, -1).putInt(24, -1).putInt(32, -1).putInt(40, -1);
+				bb.putInt(0, 0).putInt(4, -1).putInt(8, -1).putInt(12, -1).putInt(16, -1).putInt(20, -1);
 			}
 			return bb.array();
 		}
@@ -327,23 +327,23 @@ public class mine_server {
 				conquered_area[player_num]++;  // increment the area count
 			} else if (res == -1) {  // player explodes
 				conquered_area[player_num] = -1;  // indicates player_num dies
-				ByteBuffer bb = ByteBuffer.allocate(48);
+				ByteBuffer bb = ByteBuffer.allocate(24);
 				// tells the users someone dies at [row, col] and tell the users that
 				// [row, col] needs to be turned into black
-				bb.putInt(0).putInt(row).putInt(col).putInt(0).putInt(0).putInt(0);
+				bb.putInt(0, 0).putInt(4, row).putInt(8, col).putInt(12, 0).putInt(16, 0).putInt(20, 0);
 				return bb;
 			} else {  // other cases, nothing changes
-				ByteBuffer bb = ByteBuffer.allocate(48);
+				ByteBuffer bb = ByteBuffer.allocate(24);
 				// ACK is -1, telling something wasn't right and change nothing
-				bb.putInt(-1).putInt(-1).putInt(-1).putInt(-1).putInt(-1).putInt(-1);
+				bb.putInt(0, -1).putInt(4, -1).putInt(8, -1).putInt(12, -1).putInt(16, -1).putInt(20, -1);
 				return bb;
 			}
-			ByteBuffer bb = ByteBuffer.allocate(48);
+			ByteBuffer bb = ByteBuffer.allocate(24);
 			// success, tell the users to change [row, col] into a specific color
-			bb.putInt(1).putInt(row).putInt(col);
+			bb.putInt(0, 1).putInt(4, row).putInt(8, col);
 			// put in the color
 			for (int i = 0; i < 3; i++) {
-				bb.putInt(player_color[player_num][i]);
+				bb.putInt((i + 3) * 4, player_color[player_num][i]);
 			}
 			return bb;
 		}

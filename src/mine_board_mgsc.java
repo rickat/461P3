@@ -50,7 +50,7 @@ public class mine_board_mgsc extends Frame implements ActionListener{
 		System.out.println("start initialize mp");
 		mp = new MinePlayerClass();
 		// read server packet
-		ByteBuffer data = ByteBuffer.allocate(8);
+		ByteBuffer data = ByteBuffer.allocate(4);
 		socket.read(data);
 		System.out.println("finish read");
 		int socket_num = data.getInt(0);
@@ -73,7 +73,7 @@ public class mine_board_mgsc extends Frame implements ActionListener{
 			}
 		}
 		System.out.println(game_socket.isConnected());
-		ByteBuffer gdata = ByteBuffer.allocate(48);
+		ByteBuffer gdata = ByteBuffer.allocate(24);
 		game_socket.read(gdata);
 		int[] iah = mp.decodePacket(gdata);
 		for (int i = 0; i < iah.length; i++) {
@@ -169,7 +169,7 @@ public class mine_board_mgsc extends Frame implements ActionListener{
  	public static void readFromServer() throws IOException {
  		while (true) {
  			System.out.println("read from server");
- 			ByteBuffer data = ByteBuffer.allocate(48);
+ 			ByteBuffer data = ByteBuffer.allocate(24);
  			game_socket.read(data);
  			int[] a = mp.decodePacket(data);
  			if (!handleServerPacket(a)) break;
@@ -248,7 +248,7 @@ public class mine_board_mgsc extends Frame implements ActionListener{
 						System.out.println(game_socket.isBlocking());
 						ByteBuffer resbb = ByteBuffer.wrap(res);
 						for (int i = 0; i < 6; i++) {
-							System.out.println(resbb.getInt(i * 8));
+							System.out.println(resbb.getInt(i * 4));
 						}
 						// scoket send packet to server
 						game_socket.write(resbb);
