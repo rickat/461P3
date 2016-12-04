@@ -207,7 +207,7 @@ public class mine_board_mgsc extends Frame implements ActionListener{
                 f.add(cb.getGui());
                 f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 f.setLocationByPlatform(true);
-
+                f.setResizable(true);
                 // ensures the frame is the minimum size it needs to be
                 // in order display the components within it
                 f.pack();
