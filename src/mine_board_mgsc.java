@@ -237,13 +237,21 @@ public class mine_board_mgsc extends Frame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
 		JButton selectedButton = (JButton) e.getSource();
 		boolean done = false;
+		System.out.println("in listener");
 		for (int row = 0; row < buttons.length; row++) {
 			for (int col = 0; col < buttons[row].length; col++) {
 				if (buttons[row][col] == selectedButton) {
 					try{
+						System.out.println(row + " " + col);
 						byte[] res = mp.action(row, col);
+						System.out.println(game_socket.isConnected());
+						System.out.println(game_socket.isBlocking());
+						ByteBuffer resbb = ByteBuffer.wrap(res);
+						for (int i = 0; i < 6; i++) {
+							System.out.println(resbb.getInt(i * 8));
+						}
 						// scoket send packet to server
-						game_socket.write(ByteBuffer.wrap(res));
+						game_socket.write(resbb);
 						done = true;
 						break;
 					}catch(IOException i) {
