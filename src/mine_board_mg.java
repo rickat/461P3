@@ -129,7 +129,7 @@ public class mine_board_mg extends Frame implements ActionListener{
                  			if (done) break;
                  		}
                  	}
-                }
+                });
                 b.setBackground(Color.white); 
                 mineBoard.add(buttons[ii][jj]);
             }
