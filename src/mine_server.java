@@ -289,17 +289,7 @@ public class mine_server {
 									scc.write(bb2);
 									if (alive_player == 1) {
 										ByteBuffer bb3 = ByteBuffer.allocate(24);
-										bb3.putInt(0, 2).putInt(4, 0).putInt(8, 0);
-										for (int i = 0; i < PLAYER; i++) {
-											if (conquered_area[i] != -1) {
-												if (player_color[i][0] != player_color[res[0]][0]) {
-													for (int j = 0; j < 3; j++) {
-														bb3.putInt((j + 2) * 4, player_color[i][j]);
-													}
-													break;
-												}
-											}
-										}
+										bb3.putInt(0, 2).putInt(4, 0).putInt(8, 0).putInt(12, 255).putInt(16, 0).putInt(20, 0);
 										scc.write(bb3);
 									}
 								}

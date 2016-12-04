@@ -137,7 +137,7 @@ public class mine_board_mgsc extends Frame implements ActionListener{
  			System.out.println("Winner!!!!!!");
  			for (int i = 0; i < buttons.length; i++) {
  				for (int j = 0; j < buttons[0].length; j++) {
- 					setColor(i, j, new int[]{ia[3], ia[4], ia[5]});
+ 					setColor(i, j, MinePlayerClass.mycolor);
  				}
  			}
  			// but game still ends, thus return false
