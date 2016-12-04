@@ -258,6 +258,7 @@ public class mine_server {
 							while (bb.hasRemaining()) {
 								try {
 									int[] res = decodePacket(bb);
+									bb.clear();
 									ByteBuffer bb1 = reportUser(res[0], res[1], res[2]);
 									for (SocketChannel scc : socket_map.keySet()) {
 										ByteBuffer bb2 = clone(bb1);  // clone and send out the bytebuffer to
