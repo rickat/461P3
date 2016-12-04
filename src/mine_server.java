@@ -160,6 +160,7 @@ public class mine_server {
 		// public Socket[] player_sockets;  // store player socket
 		public HashMap<SocketChannel, Integer> socket_map;
 		public Selector select;
+		public int alive_player = PLAYER;
 		
 		public Client_handler(ServerSocketChannel game_server) throws Exception {
 			this.game_server = game_server;
@@ -280,11 +281,25 @@ public class mine_server {
 								bb.clear();
 								System.out.println(bb.hasRemaining());
 								ByteBuffer bb1 = reportUser(res[0], res[1], res[2]);
+								
 								for (SocketChannel scc : socket_map.keySet()) {
 									ByteBuffer bb2 = clone(bb1);  // clone and send out the bytebuffer to
 																 // everyone
 									System.out.println("start to write " + socket_map.get(scc));
 									scc.write(bb2);
+									if (alive_player == 1) {
+										ByteBuffer bb3 = ByteBuffer.allocate(24);
+										bb3.putInt(0, 2).putInt(4, 0).putInt(8, 0);
+										for (int i = 0; i < PLAYER; i++) {
+											if (conquered_area[i] != -1) {
+												for (int j = 0; j < 3; j++) {
+													bb3.putInt((j + 2) * 4, player_color[i][j]);
+												}
+												break;
+											}
+										}
+										scc.write(bb3);
+									}
 								}
 							} catch(IOException e) {
 								System.out.println("exception in bb.hasRemaining!");
@@ -301,6 +316,7 @@ public class mine_server {
 				}
 				selectedKeys.clear();
 			}
+			System.out.println("Game over");
 		}
 		
 		// decode the server packet
@@ -359,6 +375,7 @@ public class mine_server {
 				for (int i = 0; i < 3; i++) {
 					bb.putInt((i + 3) * 4, player_color[player_num][i]);
 				}
+				alive_player--;
 				return bb;
 			} else {  // other cases, nothing changes
 				ByteBuffer bb = ByteBuffer.allocate(24);
