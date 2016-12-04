@@ -123,7 +123,7 @@ public class mine_server_sc {
 			}
 		}
 		ByteBuffer bb1 = ByteBuffer.allocate(4);
-		bb1.putInt(23456);
+		bb1.putInt(nportnum);
 		new Thread(new Client_handler(ngs)).start();
 		while(true){
 			
@@ -142,8 +142,8 @@ public class mine_server_sc {
 					System.out.println("ready to bind");
 					
 					ServerSocketChannel nngs = null;
+					int nnportnum = rand.nextInt(55536) + 10000;
 					while (nngs == null) {
-						int nnportnum = rand.nextInt(55536) + 10000;
 						InetSocketAddress portnumg = new InetSocketAddress(nnportnum);
 						System.out.println("start");
 						nngs = ServerSocketChannel.open();
@@ -158,7 +158,7 @@ public class mine_server_sc {
 					System.out.println("finish bind");
 					count = 0;
 					bb1 = ByteBuffer.allocate(4);
-					bb1.putInt(22334);
+					bb1.putInt(nnportnum);
 					new Thread(new Client_handler(nngs)).start();
 				}
 				
