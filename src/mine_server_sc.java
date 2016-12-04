@@ -277,26 +277,39 @@ public class mine_server_sc {
 								System.out.println(bb.hasRemaining());
 								ByteBuffer bb1 = reportUser(res[0], res[1], res[2]);
 								
+								Iterator<SocketChannel> it = socket_map.keySet().iterator();
+								while (it.hasNext()) {
+									SocketChannel scc = it.next();
+									int x = socket_map.get(scc);
+									System.out.println("start to write " + x);
+									ByteBuffer bb2 = clone(bb1);  // clone and send out the bytebuffer to
+									 							  // everyone
+									System.out.println("start to write " + socket_map.get(scc));
+									scc.write(bb2);
+		
+									if (alive_player == 1) {
+										ByteBuffer bb3 = ByteBuffer.allocate(24);
+										bb3.putInt(0, 2).putInt(4, 0).putInt(8, 0).putInt(12, 255).putInt(16, 0).putInt(20, 0);
+										scc.write(bb3);
+									}
+									if (x == res[0]) {
+										it.remove();
+									}
+								}
+								/*
 								for (SocketChannel scc : socket_map.keySet()) {
 									ByteBuffer bb2 = clone(bb1);  // clone and send out the bytebuffer to
 																 // everyone
 									System.out.println("start to write " + socket_map.get(scc));
 									scc.write(bb2);
-									Iterator<SocketChannel> it = socket_map.keySet().iterator();
-									while (it.hasNext()) {
-										SocketChannel scce = it.next();
-										int x = socket_map.get(scce);
-										System.out.println("start to write " + x);
-										if (x == res[0]) {
-											it.remove();
-										}
-									}
+									
 									if (alive_player == 1) {
 										ByteBuffer bb3 = ByteBuffer.allocate(24);
 										bb3.putInt(0, 2).putInt(4, 0).putInt(8, 0).putInt(12, 255).putInt(16, 0).putInt(20, 0);
 										scc.write(bb3);
 									}
 								}
+								*/
 							} catch(IOException e) {
 								System.out.println("exception in bb.hasRemaining!");
 								isClosed++;
