@@ -40,7 +40,7 @@ public class mine_server {
 	/**
 	 * @param args
 	 */
-	public static Selector sel;
+	// public static Selector sel;
 	// maps a socket to player ID
 	// public static HashMap<Socket, Integer> client_info;
 	
@@ -75,12 +75,14 @@ public class mine_server {
 		// Scanner scan = new Scanner(System.in);
 		// int port_num = scan.nextInt();
 		int port_num = 11223;
+		/*
 		try {
 			sel = Selector.open();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		*/
 		// scan.close();
 		// listen for players to join
 		// send out initial message: board size for user to create board on their end
@@ -238,7 +240,7 @@ public class mine_server {
 					System.out.println("continue");
 					continue;
 				}
-				Set<SelectionKey> selectedKeys = sel.selectedKeys();
+				Set<SelectionKey> selectedKeys = select.selectedKeys();
 				Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
 				while(keyIterator.hasNext()) {
 					System.out.println("have something to read");
