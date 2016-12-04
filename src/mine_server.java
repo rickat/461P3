@@ -254,11 +254,13 @@ public class mine_server {
 								isClosed++;
 								break;
 							}
+							/*
 							bb.flip();
 							while (bb.hasRemaining()) {
 								try {
 									int[] res = decodePacket(bb);
 									bb.clear();
+									System.out.println(bb.hasRemaining());
 									ByteBuffer bb1 = reportUser(res[0], res[1], res[2]);
 									for (SocketChannel scc : socket_map.keySet()) {
 										ByteBuffer bb2 = clone(bb1);  // clone and send out the bytebuffer to
@@ -271,6 +273,23 @@ public class mine_server {
 									isClosed++;
 									break;
 								}
+							}
+							*/
+							try {
+								int[] res = decodePacket(bb);
+								bb.clear();
+								System.out.println(bb.hasRemaining());
+								ByteBuffer bb1 = reportUser(res[0], res[1], res[2]);
+								for (SocketChannel scc : socket_map.keySet()) {
+									ByteBuffer bb2 = clone(bb1);  // clone and send out the bytebuffer to
+																 // everyone
+									System.out.println("start to write " + socket_map.get(scc));
+									scc.write(bb2);
+								}
+							} catch(IOException e) {
+								System.out.println("exception in bb.hasRemaining!");
+								isClosed++;
+								break;
 							}
 						}
 					}catch(IOException i){
