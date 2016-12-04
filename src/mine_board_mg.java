@@ -50,7 +50,7 @@ public class mine_board_mg extends Frame implements ActionListener{
 		System.out.println("start initialize mp");
 		mp = new MinePlayerClass();
 		// read server packet
-		ByteBuffer data = ByteBuffer.allocate(8);
+		ByteBuffer data = ByteBuffer.allocate(4);
 		socket.read(data);
 		System.out.println("finish read");
 		int socket_num = data.getInt(0);
@@ -73,7 +73,7 @@ public class mine_board_mg extends Frame implements ActionListener{
 			}
 		}
 		System.out.println(game_socket.isConnected());
-		ByteBuffer gdata = ByteBuffer.allocate(48);
+		ByteBuffer gdata = ByteBuffer.allocate(24);
 		game_socket.read(gdata);
 		int[] iah = mp.decodePacket(gdata);
 		for (int i = 0; i < iah.length; i++) {
@@ -108,7 +108,7 @@ public class mine_board_mg extends Frame implements ActionListener{
                 buttons[ii][jj] = b;
                 b.setOpaque(true);
                 b.setBorderPainted(true);
-                // b.addActionListener(this);
+                b.addActionListener(this);
                 b.addActionListener(new ActionListener() {
                 	public void actionPerformed(ActionEvent e) {
                  		JButton selectedButton = (JButton) e.getSource();
@@ -135,6 +135,7 @@ public class mine_board_mg extends Frame implements ActionListener{
             }
         }
         System.out.println("end initialization");
+        
     }
 
     public final JComponent getmineBoard() {
@@ -188,7 +189,7 @@ public class mine_board_mg extends Frame implements ActionListener{
  	public static void readFromServer() throws IOException {
  		while (true) {
  			System.out.println("read from server");
- 			ByteBuffer data = ByteBuffer.allocate(48);
+ 			ByteBuffer data = ByteBuffer.allocate(24);
  			game_socket.read(data);
  			int[] a = mp.decodePacket(data);
  			if (!handleServerPacket(a)) break;
@@ -233,6 +234,14 @@ public class mine_board_mg extends Frame implements ActionListener{
                 f.setMinimumSize(f.getSize());
                 f.setVisible(true);
                 System.out.println("done setting up gui");
+                /*
+                try {
+					readFromServer();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+                */
             }
         };
         // SwingUtilities.invokeLater(r);
@@ -248,13 +257,21 @@ public class mine_board_mg extends Frame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
 		JButton selectedButton = (JButton) e.getSource();
 		boolean done = false;
+		System.out.println("in listener");
 		for (int row = 0; row < buttons.length; row++) {
 			for (int col = 0; col < buttons[row].length; col++) {
 				if (buttons[row][col] == selectedButton) {
 					try{
+						System.out.println(row + " " + col);
 						byte[] res = mp.action(row, col);
+						System.out.println(game_socket.isConnected());
+						System.out.println(game_socket.isBlocking());
+						ByteBuffer resbb = ByteBuffer.wrap(res);
+						for (int i = 0; i < 3; i++) {
+							System.out.println(resbb.getInt(i * 4));
+						}
 						// scoket send packet to server
-						game_socket.write(ByteBuffer.wrap(res));
+						game_socket.write(resbb);
 						done = true;
 						break;
 					}catch(IOException i) {
