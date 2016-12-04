@@ -71,6 +71,7 @@ public class mine_board_mgsc extends Frame implements ActionListener{
 				}
 			}
 		}
+		System.out.println(game_socket.isConnected());
 		ByteBuffer gdata = ByteBuffer.allocate(48);
 		game_socket.read(gdata);
 		int[] iah = mp.decodePacket(gdata);

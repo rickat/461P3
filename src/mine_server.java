@@ -127,20 +127,23 @@ public class mine_server {
 				dis.write(bb1.array());
 				System.out.println(bb1.getInt(0));
 				System.out.println("finish write");
+				
 				if (count == PLAYER) {
 					System.out.println("ready to bind");
 					portnumg = new InetSocketAddress(22334);
-					while (ngs == null) {
+					ServerSocketChannel nngs = null;
+					while (nngs == null) {
 						System.out.println("start");
-						ngs = ServerSocketChannel.open();
-						ngs.bind(portnumg);
+						nngs = ServerSocketChannel.open();
+						nngs.bind(portnumg);
 					}
 					System.out.println("finish bind");
 					count = 0;
 					bb1 = ByteBuffer.allocate(8);
 					bb1.putInt(22334);
-					new Thread(new Client_handler(ngs)).start();
+					new Thread(new Client_handler(nngs)).start();
 				}
+				
 			}
 		}
 	}
@@ -215,7 +218,7 @@ public class mine_server {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					player_count++;
+					System.out.println(player_count);
 				}
 			}
 			int isClosed = 0;
@@ -298,12 +301,12 @@ public class mine_server {
 				bb.putInt(0, 1).putInt(8, GRIDSIZE);
 				// put in the color
 				for (int i = 0; i < 3; i++) {
-					bb.putInt((i + 2) * 8, player_color[player_count][i]);
+					bb.putInt((i + 2) * 8, player_color[player_count - 1][i]);
 				}
 				bb.putInt(40, player_count);
 			} else {  // cannot fit
 				// ERROR message
-				bb.putInt(0).putInt(-1).putInt(-1).putInt(-1).putInt(-1).putInt(-1);
+				bb.putInt(0, 0).putInt(8, -1).putInt(16, -1).putInt(24, -1).putInt(32, -1).putInt(40, -1);
 			}
 			return bb.array();
 		}
