@@ -108,8 +108,28 @@ public class mine_board_mg extends Frame implements ActionListener{
                 buttons[ii][jj] = b;
                 b.setOpaque(true);
                 b.setBorderPainted(true);
-                b.addActionListener(this);
-                // b.addActionListener(this);  // ONLY CHANGE COLOR WHEN THE SERVER ASKS TO
+                // b.addActionListener(this);
+                b.addActionListener(new ActionListener() {
+                	public void actionPerformed(ActionEvent e) {
+                 		JButton selectedButton = (JButton) e.getSource();
+                 		boolean done = false;
+                 		for (int row = 0; row < buttons.length; row++) {
+                 			for (int col = 0; col < buttons[row].length; col++) {
+                 				if (buttons[row][col] == selectedButton) {
+                 					try {
+                						setColor(row, col, MinePlayerClass.mycolor);
+                					} catch (IOException e1) {
+                						// TODO Auto-generated catch block
+                						e1.printStackTrace();
+                					}
+                 					done = true;
+                 					break;
+                 				}
+                 			}
+                 			if (done) break;
+                 		}
+                 	}
+                }
                 b.setBackground(Color.white); 
                 mineBoard.add(buttons[ii][jj]);
             }
