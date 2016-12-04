@@ -177,6 +177,7 @@ public class mine_server_sc {
 		public HashMap<SocketChannel, Integer> socket_map;
 		public Selector select;
 		public int alive_player = PLAYER;
+		public HashSet<Integer> theDead = new HashSet<>();
 		
 		public Client_handler(ServerSocketChannel game_server) throws Exception {
 			this.game_server = game_server;
@@ -276,7 +277,7 @@ public class mine_server_sc {
 								bb.clear();
 								System.out.println(bb.hasRemaining());
 								ByteBuffer bb1 = reportUser(res[0], res[1], res[2]);
-								
+								/*
 								Iterator<SocketChannel> it = socket_map.keySet().iterator();
 								while (it.hasNext()) {
 									SocketChannel scc = it.next();
@@ -296,20 +297,21 @@ public class mine_server_sc {
 										it.remove();
 									}
 								}
-								/*
+								*/
 								for (SocketChannel scc : socket_map.keySet()) {
 									ByteBuffer bb2 = clone(bb1);  // clone and send out the bytebuffer to
 																 // everyone
-									System.out.println("start to write " + socket_map.get(scc));
-									scc.write(bb2);
-									
-									if (alive_player == 1) {
-										ByteBuffer bb3 = ByteBuffer.allocate(24);
-										bb3.putInt(0, 2).putInt(4, 0).putInt(8, 0).putInt(12, 255).putInt(16, 0).putInt(20, 0);
-										scc.write(bb3);
+									int theid = socket_map.get(scc);
+									System.out.println("start to write " + theid);
+									if (!theDead.contains(theid)) {
+										scc.write(bb2);
+										if (alive_player == 1) {
+											ByteBuffer bb3 = ByteBuffer.allocate(24);
+											bb3.putInt(0, 2).putInt(4, 0).putInt(8, 0).putInt(12, 255).putInt(16, 0).putInt(20, 0);
+											scc.write(bb3);
+										}
 									}
 								}
-								*/
 							} catch(IOException e) {
 								System.out.println("exception in bb.hasRemaining!");
 								isClosed++;
@@ -385,6 +387,7 @@ public class mine_server_sc {
 					bb.putInt((i + 3) * 4, player_color[player_num][i]);
 				}
 				alive_player--;
+				theDead.add(player_num);
 				return bb;
 			} else {  // other cases, nothing changes
 				ByteBuffer bb = ByteBuffer.allocate(24);
