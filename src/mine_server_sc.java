@@ -276,7 +276,8 @@ public class mine_server_sc {
 								int[] res = decodePacket(bb);
 								bb.clear();
 								System.out.println(bb.hasRemaining());
-								ByteBuffer bb1 = reportUser(res[0], res[1], res[2]);
+								int rest = game.makeMove(res[0], res[1], res[2]);
+								ByteBuffer bb1 = reportUser(res[0], res[1], res[2], rest);
 								/*
 								Iterator<SocketChannel> it = socket_map.keySet().iterator();
 								while (it.hasNext()) {
@@ -313,12 +314,14 @@ public class mine_server_sc {
 									// }
 								}
 								// theDead.add(res[0]);
-								Iterator<SocketChannel> it = socket_map.keySet().iterator();
-								while (it.hasNext()) {
-									SocketChannel scc = it.next();
-									int x = socket_map.get(scc);
-									if (x == res[0]) {
-										it.remove();
+								if (rest == -1) {
+									Iterator<SocketChannel> it = socket_map.keySet().iterator();
+									while (it.hasNext()) {
+										SocketChannel scc = it.next();
+										int x = socket_map.get(scc);
+										if (x == res[0]) {
+											it.remove();
+										}
 									}
 								}
 							} catch(IOException e) {
@@ -381,12 +384,11 @@ public class mine_server_sc {
 		}
 		
 		// returns a byte array for sending back result to user;
-		public ByteBuffer reportUser(int player_num, int row, int col) {
-			int res = game.makeMove(player_num, row, col);
+		public ByteBuffer reportUser(int player_num, int row, int col, int state) {
 			// success
-			if (res == 1) {
+			if (state == 1) {
 				conquered_area[player_num]++;  // increment the area count
-			} else if (res == -1) {  // player explodes
+			} else if (state == -1) {  // player explodes
 				conquered_area[player_num] = -1;  // indicates player_num dies
 				ByteBuffer bb = ByteBuffer.allocate(24);
 				// tells the users someone dies at [row, col] and tell the users that
