@@ -312,6 +312,7 @@ public class mine_server_sc {
 										}
 									}
 								}
+								theDead.add(res[0]);
 							} catch(IOException e) {
 								System.out.println("exception in bb.hasRemaining!");
 								isClosed++;
@@ -387,7 +388,6 @@ public class mine_server_sc {
 					bb.putInt((i + 3) * 4, player_color[player_num][i]);
 				}
 				alive_player--;
-				theDead.add(player_num);
 				return bb;
 			} else {  // other cases, nothing changes
 				ByteBuffer bb = ByteBuffer.allocate(24);
