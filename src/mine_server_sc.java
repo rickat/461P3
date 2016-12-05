@@ -312,6 +312,21 @@ public class mine_server_sc {
 										if (!theDead.contains(theid)) {
 											theDead.add(theid);
 											alive_player--;
+											isClosed++;
+											if (alive_player == 1) {
+												for (SocketChannel scc2 : socket_map.keySet()) {
+													if (scc2.isOpen() && scc2.isConnected()) {
+														ByteBuffer bb3 = ByteBuffer.allocate(24);
+														bb3.putInt(0, 2).putInt(4, 0).putInt(8, 0).putInt(12, 255).putInt(16, 0).putInt(20, 0);
+														try {
+															scc2.write(bb3);
+														} catch (IOException e) {
+															System.out.println("exception in for for each!");
+														}
+														break;
+													}
+												}
+											}
 										}
 										continue;
 									}
@@ -337,14 +352,14 @@ public class mine_server_sc {
 							} catch(IOException e) {
 								// alive_player--;
 								System.out.println("exception in bb.hasRemaining!");
-								isClosed++;
+								// isClosed++;
 								break;
 							}
 						}
 					}catch(IOException i){
 						// abort quietly
 						// alive_player--;
-						isClosed++;
+						// isClosed++;
 						System.out.println("exception in try catch 278");
 					}
 
