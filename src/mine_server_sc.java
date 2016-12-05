@@ -328,6 +328,7 @@ public class mine_server_sc {
 									}
 								}
 							} catch(IOException e) {
+								alive_player--;
 								System.out.println("exception in bb.hasRemaining!");
 								isClosed++;
 								break;
