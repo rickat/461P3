@@ -309,6 +309,10 @@ public class mine_server_sc {
 									System.out.println("start to write " + theid);
 									// if (!theDead.contains(theid)) {
 									if (!scc.isOpen() || !scc.isConnected()) {
+										if (!theDead.contains(theid)) {
+											theDead.add(theid);
+											alive_player--;
+										}
 										continue;
 									}
 									scc.write(bb2);
@@ -331,7 +335,7 @@ public class mine_server_sc {
 									}
 								}
 							} catch(IOException e) {
-								alive_player--;
+								// alive_player--;
 								System.out.println("exception in bb.hasRemaining!");
 								isClosed++;
 								break;
@@ -339,7 +343,7 @@ public class mine_server_sc {
 						}
 					}catch(IOException i){
 						// abort quietly
-						alive_player--;
+						// alive_player--;
 						isClosed++;
 						System.out.println("exception in try catch 278");
 					}
