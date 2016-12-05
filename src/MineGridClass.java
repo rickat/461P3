@@ -60,6 +60,6 @@ public class MineGridClass {
 	
 	// winning condition: only one player survives or all space is occupied
 	public boolean isEnd() {
-		return players_size == 1 || remaining_grid_space == 0;
+		return players_size <= 1 || remaining_grid_space == 0;
 	}
 }
