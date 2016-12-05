@@ -303,16 +303,24 @@ public class mine_server_sc {
 																 // everyone
 									int theid = socket_map.get(scc);
 									System.out.println("start to write " + theid);
-									if (!theDead.contains(theid)) {
-										scc.write(bb2);
-										if (alive_player == 1) {
-											ByteBuffer bb3 = ByteBuffer.allocate(24);
-											bb3.putInt(0, 2).putInt(4, 0).putInt(8, 0).putInt(12, 255).putInt(16, 0).putInt(20, 0);
-											scc.write(bb3);
-										}
+									// if (!theDead.contains(theid)) {
+									scc.write(bb2);
+									if (alive_player == 1) {
+										ByteBuffer bb3 = ByteBuffer.allocate(24);
+										bb3.putInt(0, 2).putInt(4, 0).putInt(8, 0).putInt(12, 255).putInt(16, 0).putInt(20, 0);
+										scc.write(bb3);
+									}
+									// }
+								}
+								// theDead.add(res[0]);
+								Iterator<SocketChannel> it = socket_map.keySet().iterator();
+								while (it.hasNext()) {
+									SocketChannel scc = it.next();
+									int x = socket_map.get(scc);
+									if (x == res[0]) {
+										it.remove();
 									}
 								}
-								theDead.add(res[0]);
 							} catch(IOException e) {
 								System.out.println("exception in bb.hasRemaining!");
 								isClosed++;
