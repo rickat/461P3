@@ -308,6 +308,9 @@ public class mine_server_sc {
 									int theid = socket_map.get(scc);
 									System.out.println("start to write " + theid);
 									// if (!theDead.contains(theid)) {
+									if (!scc.isOpen() || !scc.isConnected()) {
+										continue;
+									}
 									scc.write(bb2);
 									if (alive_player == 1) {
 										ByteBuffer bb3 = ByteBuffer.allocate(24);
@@ -336,6 +339,7 @@ public class mine_server_sc {
 						}
 					}catch(IOException i){
 						// abort quietly
+						alive_player--;
 						isClosed++;
 						System.out.println("exception in try catch 278");
 					}
