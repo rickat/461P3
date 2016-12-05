@@ -277,6 +277,9 @@ public class mine_server_sc {
 								bb.clear();
 								System.out.println(bb.hasRemaining());
 								int rest = game.makeMove(res[0], res[1], res[2]);
+								if (rest == -2 || rest == 0) {
+									continue;
+								}
 								ByteBuffer bb1 = reportUser(res[0], res[1], res[2], rest);
 								/*
 								Iterator<SocketChannel> it = socket_map.keySet().iterator();
