@@ -43,6 +43,7 @@ public class MineGridClass {
 	// return -1 for player death
 	// return -2 for error
 	public int makeMove(int player_num, int row, int col) {
+		player_num++;
 		if (player_num > players_size) {
 			return -2;
 		}
