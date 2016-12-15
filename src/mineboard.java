@@ -135,6 +135,7 @@ public class mineboard {
 							for (int col = 0; col < buttons[row].length; col++) {
 								if (buttons[row][col] == selectedButton) {
 									try{
+									System.out.println("apple");
 									byte[] res = mp.action(row, col);
 									// scoket send packet to server
 									OutputStream out = socket.getOutputStream();

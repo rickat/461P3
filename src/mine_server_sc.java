@@ -69,36 +69,22 @@ public class mine_server_sc {
 	 * --------------------------
 	 */
 	public static void main(String[] args) throws Exception {
-		// TODO Auto-generated method stub
-		
-		// get port number
-		// Scanner scan = new Scanner(System.in);
-		// int port_num = scan.nextInt();
 		int port_num = 11223;
-		/*
-		try {
-			sel = Selector.open();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		*/
-		// scan.close();
 		// listen for players to join
 		// send out initial message: board size for user to create board on their end
 		/*
 		 * Following space will be handling user's request and show them on the panel
 		 * Get player move by calling game.makeMove()
-		 * paint the board accroding to the value returned
+		 * paint the board according to the value returned
 		 * 
-		 * Use while loop to continuously get player respond, 4 request from 4 players one round in the while
-		 * loop, condition set to isEnd() THINKING ABOUT LOCKING WHEN ONE PLAYER IS USING
+		 * Use while loop to continuously get player respond, 3 requests from 3 players one round in the while
+		 * loop, condition set to isEnd()
 		 * 
 		 * if end:
 		 * case 1: only one player survived, report the winner
 		 * case 2: more than one survived, player with more land wins, report the winner
 		 */
-		Random rand = new Random();
+		
 		InetSocketAddress portnum = new InetSocketAddress(port_num);
 		ServerSocketChannel scs = ServerSocketChannel.open();
 		try {
@@ -108,6 +94,7 @@ public class mine_server_sc {
 			System.exit(-1);
 		}
 		// accepts PLAYER players into game
+		Random rand = new Random();
 		int count = 0;
 		int nportnum = 23456;
 		ServerSocketChannel ngs = null;
