@@ -20,8 +20,8 @@ public class mine_board_mgsc extends Frame implements ActionListener{
 	private static final long serialVersionUID = 1L;
 	private final JPanel gui = new JPanel(new BorderLayout(3, 3));
     private JPanel mineBoard;
-    private int size; // = 25;  // HERE
-    private static JButton[][] buttons; // = new JButton[size][size];  // HERE
+    private int size;
+    private static JButton[][] buttons; 
     public static SocketChannel socket;
     public static SocketChannel game_socket;
 	public static MinePlayerClass mp;
@@ -191,19 +191,12 @@ public class mine_board_mgsc extends Frame implements ActionListener{
 
             @Override
             public void run() {
-            	// Scanner scan = new Scanner(System.in);
-            	// System.out.println("Enter host name: ");
-            	// String host_name = scan.nextLine();
             	String host_name = "attu1.cs.washington.edu";
-            	// System.out.println("Enter port number: ");
-            	// int portnum = scan.nextInt();
-            	// scan.close();
             	int portnum = 11223;
                 mine_board_mgsc cb = null;
 				try {
 					cb = new mine_board_mgsc(host_name, portnum);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					System.out.println("abort");
 					System.exit(ABORT);
@@ -221,22 +214,12 @@ public class mine_board_mgsc extends Frame implements ActionListener{
                 f.setMinimumSize(f.getSize());
                 f.setVisible(true);
                 System.out.println("done setting up gui");
-                /*
-                try {
-					readFromServer();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-                */
             }
         };
-        // SwingUtilities.invokeLater(r);
         SwingUtilities.invokeAndWait(r);
         try {
 			readFromServer();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
@@ -257,7 +240,7 @@ public class mine_board_mgsc extends Frame implements ActionListener{
 						for (int i = 0; i < 3; i++) {
 							System.out.println(resbb.getInt(i * 4));
 						}
-						// scoket send packet to server
+						// socket send packet to server
 						game_socket.write(resbb);
 						System.out.println("after write");
 						done = true;
