@@ -19,7 +19,7 @@ public class MinePlayerClass {
 	// ia[0] is ack
 	// ia[1] is size
 	// ia[2],ia[3],ia[4] is color
-	// ia[5] is color
+	// ia[5] is player id
 	// return whether user servive
 	public int handleFirstPacket(int[] ia) {
 		if (ia[0] == 0) {  // failed to join
@@ -35,10 +35,6 @@ public class MinePlayerClass {
 			}
 			// get id
 			player_id = ia[5];
-			// draw the GUI
-			//createPanel(ia[1]);
-			//return true;
-
 		}
 		return ia[1];
 	}
